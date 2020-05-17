@@ -1,0 +1,49 @@
+<div class="uk-grid-collapse uk-child-width-expand@s" uk-grid>
+    <div class="uk-width-1-1">
+        <app-navbar></app-navbar>
+    </div>
+
+    <div class="uk-width-1-5 uk-visible@l" style="max-width: 240px !important;">
+        <app-sidebar></app-sidebar>
+    </div>
+
+    <div class="uk-width-expand" style="min-height: calc(100vh - 70px);">
+
+        <div class="uk-container uk-section">
+            <!-- Header  -->
+            <div class="uk-clearfix">
+                <h2 class="uk-float-left">Projects</h2>
+
+                <button class="uk-button uk-button-primary uk-float-right uk-text-bold uk-border-pill" routerLink="/project/add">
+                    <span class="uk-margin-small-right" uk-icon="plus"></span> Add Project
+                </button>
+            </div>
+
+            <!-- Table of projects  -->
+            <div class="uk-card uk-card-default uk-padding border-radius-20">
+                <!-- Loading fetching Projects...  -->
+                <!-- <h3 class="uk-text-center" style="margin: 20px;">Fetching Projects <span class="uk-margin-left" uk-spinner></span></h3> -->
+
+                <!-- No Projects found Error  -->
+                <!-- <h3 class="uk-text-center" style="margin: 20px;">No Projects found</h3> -->
+
+                <!-- Projects  -->
+                <table class="uk-table uk-table-divider uk-text-nowrap table-hover">
+                    <thead>
+                        <tr class="uk-text-center">
+                            <th>Project</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr class="uk-box-shadow-hover-medium fw-500">
+
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+    </div>
+</div>

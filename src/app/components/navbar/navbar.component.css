@@ -1,0 +1,28 @@
+.avatar {
+    height: 50px !important;
+    width: 50px !important;
+}
+
+.uk-navbar-nav>li>a {
+    text-transform: none;
+}
+
+.cursor-default {
+    cursor: default;
+}
+
+.uk-badge {
+    min-width: 10px !important;
+    height: 10px !important;
+    width: 10px !important;
+    margin-bottom: 15px;
+    border-radius: 10px !important;
+}
+
+.pl {
+    padding-left: 54px;
+}
+
+#logo {
+    list-style-type: none !important;
+}

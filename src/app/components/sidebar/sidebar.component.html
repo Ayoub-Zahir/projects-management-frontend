@@ -1,0 +1,64 @@
+<!-- sidebar on large scree  -->
+<aside id="left-col" class="uk-light">
+    <div class="bar-wrap">
+        <ul class="uk-nav uk-nav-primary uk-nav-center">
+
+            <!-- Logo -->
+            <li class="uk-text-center logo uk-flex uk-flex-middle uk-flex-center">
+                <a class="logo" routerLink="/projects">
+                    <span class="text-danger">ng</span> charity
+                </a>
+            </li>
+
+            <!-- Dashboard -->
+            <li class="uk-parent uk-text-left uk-margin-top" routerLinkActive="uk-active">
+                <a class="fs-1 uk-margin-small-left uk-margin-small-right" routerLink="/projects">
+                    <span class="uk-margin-small-right" uk-icon="icon: home"></span> Dashboard
+                </a>
+
+                <ul class="uk-nav-sub">
+                    <li class="uk-margin-left">
+                        <a routerLinkActive="active" class="fs-1 uk-margin-small-left uk-margin-small-right" routerLink="/projects">
+                            <span class="uk-margin-small-right material-icons uk-text-middle">domain</span> Projects
+                        </a>
+                    </li>
+                    <li class="uk-margin-left ">
+                        <a routerLinkActive="active" class="fs-1 uk-margin-small-left uk-margin-small-right" routerLink="/users">
+
+                            <span class="uk-margin-small-right material-icons uk-text-middle">people</span> Users
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <!-- Settings -->
+            <li class="uk-text-left uk-margin-top" routerLinkActive="uk-active">
+                <a class="fs-1 uk-margin-small-left uk-margin-small-right" routerLink="/settings">
+                    <span class="uk-margin-small-right" uk-icon="icon: settings"></span> Projects Settings
+                </a>
+            </li>
+
+            <!-- Profile -->
+            <li class="uk-text-left uk-margin-top" routerLinkActive="uk-active">
+                <a class="fs-1 uk-margin-small-left uk-margin-small-right" routerLink="/profile">
+                    <span class="uk-margin-small-right material-icons uk-text-middle">account_circle</span> Profile
+                </a>
+            </li>
+
+            <!-- History -->
+            <li class="uk-text-left uk-margin-top" routerLinkActive="uk-active">
+                <a class="fs-1 uk-margin-small-left uk-margin-small-right" routerLink="/history">
+                    <span class="uk-margin-small-right" uk-icon="icon: history"></span> Users History
+                </a>
+            </li>
+
+            <!-- Logout -->
+            <li class="uk-text-left uk-margin-top">
+                <a class="fs-1 uk-margin-small-left" (click)="logout()">
+                    <span class="uk-margin-small-right" uk-icon="icon: sign-out"></span> Logout
+                </a>
+            </li>
+
+        </ul>
+    </div>
+</aside>

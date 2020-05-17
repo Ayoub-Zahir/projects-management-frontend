@@ -1,1 +1,234 @@
-/* You can add global styles to this file, and also import other style files */
+/** Global ***********************/
+
+body {
+    background-color: whitesmoke;
+    height: fit-content;
+}
+
+.delete-btn {
+    border-top-right-radius: 500px !important;
+    border-bottom-right-radius: 500px !important;
+}
+
+.edit-btn {
+    border-top-left-radius: 500px !important;
+    border-bottom-left-radius: 500px !important;
+}
+
+.fs-1 {
+    font-size: 1.1rem !important;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px white inset !important;
+    box-shadow: 0 0 0 30px white inset !important;
+}
+
+.table-hover tbody tr:hover td,
+.table-hover tbody tr:hover th {
+    background-color: whitesmoke !important;
+}
+
+.uk-form-danger {
+    color: initial !important;
+}
+
+
+/** Media Query  ****************************/
+
+@media (min-width: 960px) {
+    .uk-container {
+        padding-left: 70px !important;
+        padding-right: 70px !important;
+    }
+}
+
+@media (max-width: 960px) {
+    .uk-container {
+        padding-left: 50px !important;
+        padding-right: 50px !important;
+    }
+}
+
+
+/** SweetAlert2  ****************************/
+
+.swal2-icon {
+    margin: 10px 0 0 0 !important;
+}
+
+.swal2-popup {
+    padding: 15px !important;
+    font-size: 15px !important;
+}
+
+
+/** Border Radius *******************************/
+
+.border-radius-20 {
+    border-radius: 20px !important;
+}
+
+.border-radius-10 {
+    border-radius: 10px !important;
+}
+
+
+/** Navbar && Sidebar *******************************/
+
+.side-margin-left {
+    margin-left: 20vw;
+}
+
+.navbar-secondary {
+    background-color: #0D1B1E !important;
+}
+
+.navbar {
+    height: 70px !important;
+    max-height: 89px !important;
+}
+
+.uk-navbar-nav>li>a,
+.uk-navbar-item,
+.uk-navbar-toggle {
+    min-height: auto !important;
+}
+
+
+/** logo ***********************/
+
+.logo {
+    font-size: 1.5rem !important;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #fff !important;
+    text-decoration: none !important;
+}
+
+
+/** Text Color *******************/
+
+.text-danger {
+    color: #F25F5C !important;
+}
+
+.text-secondary {
+    color: #0D1B1E !important;
+}
+
+.text-primary {
+    color: #3C91E6 !important;
+}
+
+.text-warning {
+    color: #FFF05A !important;
+}
+
+.text-white {
+    color: #ffff !important;
+}
+
+.text-success {
+    color: #51CF66 !important;
+}
+
+
+/** Button Color **************************/
+
+.uk-button-primary {
+    background-color: #3C91E6 !important;
+}
+
+.uk-button-warning {
+    background-color: #FFF05A !important;
+    /* color: #fff !important; */
+}
+
+.uk-button-danger {
+    background-color: #F25F5C !important;
+}
+
+.uk-button:disabled {
+    background-color: rgb(226, 226, 226) !important;
+    color: white !important;
+}
+
+.uk-button-secondary {
+    background-color: #0D1B1E !important;
+}
+
+
+/* The switch - the box around the slider ***********************/
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+
+/* Hide default HTML checkbox */
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+
+/* The slider */
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked+.slider {
+    background-color: #3C91E6;
+}
+
+input:focus+.slider {
+    box-shadow: 0 0 1px #3C91E6;
+}
+
+input:checked+.slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+}
+
+
+/* Rounded sliders */
+
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
