@@ -29,3 +29,7 @@
 .uk-nav li.logo {
     height: 70px;
 }
+
+.uk-margin-top {
+    margin-top: 10px !important;
+}

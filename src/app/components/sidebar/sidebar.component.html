@@ -4,58 +4,67 @@
         <ul class="uk-nav uk-nav-primary uk-nav-center">
 
             <!-- Logo -->
-            <li class="uk-text-center logo uk-flex uk-flex-middle uk-flex-center">
-                <a class="logo" routerLink="/projects">
-                    <span class="text-danger">ng</span> charity
+            <li>
+                <a routerLink="/projects">
+                    <img src="assets/img/logo.svg" alt="logo">
                 </a>
             </li>
 
             <!-- Dashboard -->
-            <li class="uk-parent uk-text-left uk-margin-top" routerLinkActive="uk-active">
-                <a class="fs-1 uk-margin-small-left uk-margin-small-right" routerLink="/projects">
-                    <span class="uk-margin-small-right" uk-icon="icon: home"></span> Dashboard
+            <li class="uk-text-left" routerLinkActive="uk-active" style="margin-top: 1rem;">
+                <a class="fs-1 uk-margin-small-left uk-margin-small-right" routerLink="/dashboard">
+                    <span class="uk-margin-small-right material-icons-outlined uk-text-middle">assessment</span> Dashboard
                 </a>
-
-                <ul class="uk-nav-sub">
-                    <li class="uk-margin-left">
-                        <a routerLinkActive="active" class="fs-1 uk-margin-small-left uk-margin-small-right" routerLink="/projects">
-                            <span class="uk-margin-small-right material-icons uk-text-middle">domain</span> Projects
-                        </a>
-                    </li>
-                    <li class="uk-margin-left ">
-                        <a routerLinkActive="active" class="fs-1 uk-margin-small-left uk-margin-small-right" routerLink="/users">
-
-                            <span class="uk-margin-small-right material-icons uk-text-middle">people</span> Users
-                        </a>
-                    </li>
-                </ul>
             </li>
 
-            <!-- Settings -->
+            <!-- Dashboard -->
+            <li class="uk-text-left uk-margin-top" routerLinkActive="uk-active">
+                <a class="fs-1 uk-margin-small-left uk-margin-small-right" routerLink="/dashboard">
+                    <span class="uk-margin-small-right material-icons-outlined uk-text-middle">work_outline</span> Projects
+                </a>
+            </li>
+
+            <!-- Tasks -->
             <li class="uk-text-left uk-margin-top" routerLinkActive="uk-active">
                 <a class="fs-1 uk-margin-small-left uk-margin-small-right" routerLink="/settings">
-                    <span class="uk-margin-small-right" uk-icon="icon: settings"></span> Projects Settings
+                    <span class="uk-margin-small-right material-icons-outlined uk-text-middle">check_circle</span> Tasks
                 </a>
             </li>
+
+            <!-- Competences -->
+            <li class="uk-text-left uk-margin-top" routerLinkActive="uk-active">
+                <a class="fs-1 uk-margin-small-left uk-margin-small-right" routerLink="/dashboard">
+                    <span class="uk-margin-small-right material-icons uk-text-middle">people_outline</span> Collaboraters
+                </a>
+            </li>
+
+            <!-- Competences -->
+            <li class="uk-text-left uk-margin-top" routerLinkActive="uk-active">
+                <a class="fs-1 uk-margin-small-left uk-margin-small-right" routerLink="/dashboard">
+                    <!-- <span class="uk-margin-small-right material-icons uk-text-middle">business_center</span>  -->
+                    <span class="uk-margin-small-right material-icons uk-text-middle">code</span> Competences
+                </a>
+            </li>
+
 
             <!-- Profile -->
             <li class="uk-text-left uk-margin-top" routerLinkActive="uk-active">
                 <a class="fs-1 uk-margin-small-left uk-margin-small-right" routerLink="/profile">
-                    <span class="uk-margin-small-right material-icons uk-text-middle">account_circle</span> Profile
+                    <span class="uk-margin-small-right material-icons-outlined uk-text-middle">account_circle</span> Profile
                 </a>
             </li>
 
             <!-- History -->
             <li class="uk-text-left uk-margin-top" routerLinkActive="uk-active">
                 <a class="fs-1 uk-margin-small-left uk-margin-small-right" routerLink="/history">
-                    <span class="uk-margin-small-right" uk-icon="icon: history"></span> Users History
+                    <span class="uk-margin-small-right material-icons-outlined uk-text-middle">restore</span> Users History
                 </a>
             </li>
 
             <!-- Logout -->
             <li class="uk-text-left uk-margin-top">
                 <a class="fs-1 uk-margin-small-left" (click)="logout()">
-                    <span class="uk-margin-small-right" uk-icon="icon: sign-out"></span> Logout
+                    <span class="uk-margin-small-right material-icons-outlined uk-text-middle">exit_to_app</span> Logout
                 </a>
             </li>
 
