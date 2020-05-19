@@ -1,0 +1,169 @@
+<div class="uk-grid-collapse uk-child-width-expand@s" uk-grid>
+    <div class="uk-width-1-1">
+        <app-navbar></app-navbar>
+    </div>
+
+    <div class="uk-width-1-5 uk-visible@l" style="max-width: 240px !important;">
+        <app-sidebar></app-sidebar>
+    </div>
+
+    <div class="uk-width-expand" style="min-height: calc(100vh - 70px);">
+        <div class="uk-container uk-section">
+            <!-- Tab navigation  -->
+            <ul id="tab-nav" uk-tab>
+                <li class="uk-active">
+                    <a href="#project-detail">Project Details</a>
+                </li>
+                <li>
+                    <a href="#project-task">Project Tasks</a>
+                </li>
+            </ul>
+
+            <!-- content -->
+            <div id="content" class="uk-switcher">
+
+                <!-- Project info  -->
+                <div id="project-details">
+                    <!-- Header  -->
+                    <div class="uk-clearfix uk-margin-small-bottom">
+                        <h2 class="uk-float-left">Project Details</h2>
+
+                        <button class="uk-button uk-button-secondary uk-float-right uk-text-bold uk-border-pill" routerLink="/projects/edit/{{currentProject?.id}}">
+                            <span class="uk-margin-small-right" uk-icon="pencil"></span> Edit Project
+                        </button>
+                    </div>
+
+                    <!-- Card -->
+                    <div class="uk-card uk-card-default uk-padding border-radius-20" style="margin: auto;">
+                        <!-- Error...  -->
+                        <h3 *ngIf="httpError" class="uk-text-center uk-margin-remove">{{httpError}}</h3>
+
+                        <h3 *ngIf="loading" class="uk-text-center uk-margin-remove">
+                            <div uk-spinner="ratio: 1.5"></div>
+                        </h3>
+
+                        <!-- Content  -->
+                        <div *ngIf="!httpError && currentProject">
+                            <div class="img-container uk-flex uk-flex-center" style="margin: 0 !important;">
+                                <div class="projectImg bg_{{currentProject.id}}" [class.bg_4]="currentProject.id > 3"></div>
+                            </div>
+                            <!-- User Name -->
+                            <h1 class="uk-text-center" style="margin-top: 0 !important;">{{currentProject.name | titlecase}}</h1>
+
+                            <!-- Due Date -->
+                            <button class="uk-button due-date border-radius-10 uk-flex uk-flex-middle fw-600" [class.uk-button-warning]="currentProject.daysLeft > 3 && currentProject.daysLeft <= 6" [class.uk-button-danger]="currentProject.daysLeft <= 3" style="margin: auto;">
+                                <span class="material-icons uk-margin-small-right">schedule</span> {{currentProject.daysLeft}} days left
+                            </button>
+
+                            <!-- More info  -->
+                            <ul class="uk-list uk-list-large uk-list-divider uk-margin-top ">
+                                <li></li>
+
+                                <li class="uk-flex uk-flex-middle fw-400">
+                                    <span class="material-icons-outlined text-primary uk-margin-small-right">check_circle</span>
+                                    <span class="uk-text-bold uk-margin-small-right"> Tasks : </span> {{currentProject.completedTasks }} of {{currentProject.tasks.length}} tasts completed
+                                </li>
+
+                                <li class="uk-flex uk-flex-middle fw-400">
+                                    <span class="material-icons text-primary uk-margin-small-right">schedule</span>
+                                    <span class="uk-text-bold uk-margin-small-right"> Starting date : </span> {{currentProject.startDate | date}}
+                                </li>
+
+                                <li class="uk-flex uk-flex-middle fw-400">
+                                    <span class="material-icons text-primary uk-margin-small-right">event_available</span>
+                                    <span class="uk-text-bold uk-margin-small-right"> Ending date : </span> {{currentProject.endDate | date}}
+                                </li>
+
+                                <li class="uk-flex uk-flex-middle fw-400">
+                                    <span class="material-icons text-primary uk-margin-small-right">hourglass_empty</span>
+                                    <span class="uk-text-bold uk-margin-small-right"> Hourly volume : </span> {{currentProject.hourlyVolume}} hours
+                                </li>
+
+                                <li *ngIf="currentProject.description" class="uk-flex uk-flex-middle fw-400">
+                                    <span class="material-icons text-primary uk-margin-small-right">description</span>
+                                    <span class="uk-text-bold uk-margin-small-right" style="min-width: 96px;"> Description : </span>{{currentProject.description}}
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project Tasks  -->
+                <div id="project-tasks">
+                    <div class="uk-clearfix uk-margin-small-bottom">
+                        <h2 class="uk-float-left">Project Tasks</h2>
+
+                        <button class="uk-button uk-button-primary uk-float-right uk-text-bold uk-border-pill uk-flex uk-flex-middle" routerLink="/tasks/add">
+                            <span class="material-icons uk-text-middle">add</span> Add Task
+                        </button>
+                    </div>
+
+                    <!-- Card -->
+                    <div class="uk-card uk-card-default uk-padding border-radius-20" style="margin: auto;">
+                        <!-- No project found...  -->
+                        <h3 *ngIf="httpError" class="uk-text-center uk-margin-remove">{{httpError}}</h3>
+
+                        <!-- Loading  -->
+                        <h3 *ngIf="loading" class="uk-text-center uk-margin-remove">
+                            <div uk-spinner="ratio: 1.5"></div>
+                        </h3>
+
+                        <!-- No task  found...  -->
+                        <h3 *ngIf="!httpError && currentProject && currentProject.tasks.length === 0" class="uk-text-center uk-margin-remove">There is no tasks assiciated with this project.</h3>
+
+                        <!-- Content  -->
+                        <div *ngIf="!httpError && currentProject && currentProject.tasks.length !== 0">
+                            <table class="uk-table uk-table-divider uk-text-nowrap table-hover">
+                                <thead>
+                                    <tr class="uk-text-center">
+                                        <td>#ID</td>
+                                        <th>Task</th>
+                                        <th>Hourly Volume</th>
+                                        <th>Start date</th>
+                                        <th>End date</th>
+                                        <th>State</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    <tr class="uk-box-shadow-hover-medium fw-550" *ngFor="let task of currentProject.tasks">
+                                        <td>{{task.id}}</td>
+                                        <td>{{task.name}}</td>
+                                        <td>{{task.hourlyVolume}}</td>
+                                        <td>{{task.startDate | date}}</td>
+                                        <td>{{task.endDate | date}}</td>
+                                        <td [class.text-success]="task.isComplete">{{task.isComplete ? 'Completed' : 'In progress'}}</td>
+                                        <td>
+                                            <button class="uk-button uk-button-default uk-border-pill uk-text-bold" style="padding: 0 18px !important;">
+                                                <span uk-icon="more"></span>
+                                            </button>
+                                            <div class="border-radius-10" uk-dropdown="pos: bottom-justify; mode: click" style="padding: 20px; min-width: 150px !important;">
+                                                <ul class="uk-nav uk-dropdown-nav">
+                                                    <li>
+                                                        <a routerLink="/tasks/{{task.id}}" class="details"><span class="uk-margin-small-right" uk-icon="icon: info"></span>Details
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="edit" routerLink="/task/edit/{{task.id}}">
+                                                            <span class="uk-margin-small-right" uk-icon="icon: pencil"></span> Edit
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="delete">
+                                                            <span class="uk-margin-small-right" uk-icon="icon: trash"></span> Delete
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

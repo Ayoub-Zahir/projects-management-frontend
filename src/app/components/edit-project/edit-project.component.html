@@ -1,0 +1,111 @@
+<div class="uk-grid-collapse uk-child-width-expand@s" uk-grid>
+    <div class="uk-width-1-1">
+        <app-navbar></app-navbar>
+    </div>
+
+    <div class="uk-width-1-5 uk-visible@l" style="max-width: 240px !important;">
+        <app-sidebar></app-sidebar>
+    </div>
+
+    <div class="uk-width-expand" style="min-height: calc(100vh - 70px);">
+        <div class="uk-container uk-section">
+            <h2>Update Project</h2>
+
+            <form (ngSubmit)="onUpdateProject(updateProjectform)" #updateProjectform="ngForm" class="uk-form-stacked uk-card uk-card-default uk-padding border-radius-20">
+                <!-- Error...  -->
+                <h3 *ngIf="httpError" class="uk-text-center uk-margin-remove">{{httpError}}</h3>
+
+                <h3 *ngIf="loading" class="uk-text-center uk-margin-remove">
+                    <div uk-spinner="ratio: 1.5"></div>
+                </h3>
+
+                <fieldset *ngIf="!httpError && !loading" class="uk-fieldset">
+                    <!-- Project name field  -->
+                    <div class="uk-margin">
+                        <label class="uk-form-label uk-text-bold" for="form-stacked-text">
+                            Project Name
+                            <span class="uk-text-danger">*</span>
+                        </label>
+                        <div class="uk-form-controls">
+                            <input class="uk-input border-radius-10" [class.uk-form-danger]="projectName.invalid && projectName.touched" type="text" placeholder="project name" name="name" [(ngModel)]="currentProject.name" #projectName="ngModel" required minlength="3">
+                        </div>
+
+                        <!-- Validation errors -->
+                        <div *ngIf="projectName.errors && projectName.touched">
+                            <p [hidden]="!projectName.errors?.required" class="uk-text-danger" style="margin-top: 6px;font-size: .9rem;">Project name required.</p>
+                            <p [hidden]="!projectName.errors?.minlength" class="uk-text-danger" style="margin-top: 6px;font-size: .9rem;">Must be more at least 3 caracters.</p>
+                        </div>
+                    </div>
+
+                    <!-- Dates field  -->
+                    <div class="uk-margin">
+                        <div class="uk-form-controls" uk-grid>
+                            <!-- Start Date  -->
+                            <div class="uk-width-1-2@s">
+                                <label class="uk-form-label uk-text-bold" for="form-stacked-text">
+                                    Start date
+                                    <span class="uk-text-danger">*</span>
+                                </label>
+                                <input class="uk-input border-radius-10" [class.uk-form-danger]="startDate.invalid && startDate.touched" name="startDate" type="date" [(ngModel)]="currentProject.startDate" #startDate="ngModel" required>
+
+                                <!-- Validation errors -->
+                                <div *ngIf="startDate.errors && startDate.touched">
+                                    <p [hidden]="!startDate.errors?.required" class="uk-text-danger" style="margin-top: 6px;font-size: .9rem;">Start Date required.</p>
+                                </div>
+                            </div>
+
+                            <!-- End Date  -->
+                            <div class="uk-width-1-2@s">
+                                <label class="uk-form-label uk-text-bold" for="form-stacked-text">
+                                    End date
+                                    <span class="uk-text-danger">*</span>
+                                </label>
+                                <input class="uk-input border-radius-10" [class.uk-form-danger]="endDate.invalid && endDate.touched" name="endDate" type="date" [(ngModel)]="currentProject.endDate" #endDate="ngModel" required>
+
+                                <!-- Validation errors -->
+                                <div *ngIf="endDate.errors && endDate.touched" style="margin-bottom: 0 !important;">
+                                    <p [hidden]="!endDate.errors?.required" class="uk-text-danger" style="margin: 6px 0 0 0; font-size: .9rem;">End Date required.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Hourly Volume field  -->
+                    <div class="uk-margin">
+                        <label class="uk-form-label uk-text-bold" for="form-stacked-text">
+                            Hourly Volume
+                            <span class="uk-text-danger">*</span>
+                        </label>
+                        <div class="uk-form-controls">
+                            <input class="uk-input border-radius-10" [class.uk-form-danger]="hourlyVolume.invalid && hourlyVolume.touched" type="number" min="0" placeholder="100 hours" name="hourlyVolume" [(ngModel)]="currentProject.hourlyVolume" #hourlyVolume="ngModel" required>
+                        </div>
+
+                        <!-- Validation errors -->
+                        <div *ngIf="hourlyVolume.errors?.required && hourlyVolume.touched">
+                            <p class="uk-text-danger" style="margin-top: 6px;font-size: .9rem;">Hourly volume required.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Description  -->
+                    <div class="uk-margin">
+                        <label class="uk-form-label uk-text-bold" for="form-stacked-text">Project Description</label>
+                        <div class="uk-form-controls">
+                            <textarea class="uk-textarea border-radius-10" rows="4" placeholder="Project description..." name="description" [(ngModel)]="currentProject.description"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Submit  -->
+                    <div *ngIf="updateProcessLoading" class="uk-margin">
+                        <button class="uk-button uk-button-warning uk-width-1-1 uk-text-bold uk-border-pill" type="submit" uk-spinner="ratio: 0.9"></button>
+                    </div>
+                    <div *ngIf="!updateProcessLoading" class="uk-margin">
+                        <button [disabled]="!updateProjectform.dirty" class="uk-button uk-button-warning uk-width-1-1 uk-text-bold uk-border-pill" type="submit">Save Changes</button>
+                    </div>
+
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>

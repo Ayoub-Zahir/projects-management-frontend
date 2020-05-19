@@ -8,42 +8,85 @@
     </div>
 
     <div class="uk-width-expand" style="min-height: calc(100vh - 70px);">
-
         <div class="uk-container uk-section">
             <!-- Header  -->
-            <div class="uk-clearfix">
-                <h2 class="uk-float-left">Projects</h2>
+            <div class="uk-clearfix uk-margin-small-bottom">
+                <h2 class="uk-float-left">Projects <span class="uk-text-muted">({{projects.length}})</span></h2>
 
-                <button class="uk-button uk-button-primary uk-float-right uk-text-bold uk-border-pill" routerLink="/project/add">
-                    <span class="uk-margin-small-right" uk-icon="plus"></span> Add Project
+                <button class="uk-button uk-button-primary uk-float-right uk-text-bold uk-border-pill uk-flex uk-flex-middle" routerLink="/projects/add">
+                    <span class="material-icons uk-text-middle">add</span> Add Project
                 </button>
             </div>
 
-            <!-- Table of projects  -->
-            <div class="uk-card uk-card-default uk-padding border-radius-20">
-                <!-- Loading fetching Projects...  -->
-                <!-- <h3 class="uk-text-center" style="margin: 20px;">Fetching Projects <span class="uk-margin-left" uk-spinner></span></h3> -->
+            <!-- Error message && Loading -->
+            <div *ngIf="error || httpError || loading" class="uk-card uk-card-default uk-card-hover uk-card-body border-radius-20">
 
-                <!-- No Projects found Error  -->
-                <!-- <h3 class="uk-text-center" style="margin: 20px;">No Projects found</h3> -->
+                <h3 *ngIf="error" class="uk-text-center">{{error}}</h3>
+                <h3 *ngIf="httpError" class="uk-text-center uk-margin-remove">{{httpError}}</h3>
 
-                <!-- Projects  -->
-                <table class="uk-table uk-table-divider uk-text-nowrap table-hover">
-                    <thead>
-                        <tr class="uk-text-center">
-                            <th>Project</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        <tr class="uk-box-shadow-hover-medium fw-500">
-
-                        </tr>
-                    </tbody>
-                </table>
+                <h3 *ngIf="loading" class="uk-text-center uk-margin-remove">
+                    <div uk-spinner="ratio: 1.5"></div>
+                </h3>
             </div>
 
-        </div>
+            <!-- Cards  -->
+            <div *ngIf="!error && projects.length !== 0" class="project-cards uk-grid-row uk-child-width-1-3@xl uk-child-width-1-2@m uk-child-width-1-1@s uk-text-center" uk-grid>
+                <div *ngFor="let project of projects">
+                    <div class="uk-card uk-card-default uk-card-hover uk-card-body border-radius-10 ">
+                        <!-- Title  -->
+                        <div class="uk-card-title uk-child-width-expand" style="margin: auto;" uk-grid>
+                            <div class="uk-padding-remove uk-flex uk-flex-middle uk-flex-center">
+                                <a routerLink="/projects/{{project.id}}" style="text-decoration: none;">
+                                    <h3 class="uk-margin-remove">{{project.name | titlecase}}</h3>
+                                </a>
+                            </div>
 
+                            <div class="uk-padding-remove uk-flex uk-flex-middle uk-flex-center">
+                                <button class="uk-button border-radius-10 due-date uk-flex uk-flex-middle fw-600" [class.uk-button-warning]="project.daysLeft > 3 && project.daysLeft <= 6" [class.uk-button-danger]="project.daysLeft <= 3">
+                                    <span class="material-icons uk-margin-small-right">schedule</span> {{project.daysLeft}} days left
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Description  -->
+                        <div style="margin-top: 35px;">
+                            <p *ngIf="project.description">{{truncateChar(project.description)}}</p>
+                        </div>
+
+                        <!-- Tasks & Hours  -->
+                        <div class="uk-margin-top uk-child-width-expand" style="margin: auto;" uk-grid>
+                            <div class="uk-padding-remove">
+                                <h4>{{project.tasks.length}}
+                                    <div class="uk-text-meta">Tasks</div>
+                                </h4>
+                            </div>
+
+                            <div class="uk-padding-remove uk-flex uk-flex-middle">
+                                <hr class="uk-divider-vertical">
+                            </div>
+
+                            <div class="uk-padding-remove">
+                                <h4>{{project.hourlyVolume}}
+                                    <div class="uk-text-meta">Hours</div>
+                                </h4>
+                            </div>
+                        </div>
+
+                        <!-- Progress  -->
+                        <div class="uk-margin-top">
+                            <progress class="uk-progress uk-margin-small-bottom" value="{{project.progress}}" max="100"></progress>
+                            <h5 class="uk-margin-remove">{{project.progress}}%</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Float Add button  -->
+            <div class="add-button uk-animation-scale-up" uk-tooltip="Add Project">
+                <a routerLink="/projects/add" class="uk-icon-button text-white bg-primary uk-box-shadow-xlarge" style="height: 50px; width: 50px;text-decoration: none">
+                    <span class="material-icons uk-text-middle" style="font-size: 1.6rem;">add</span>
+                </a>
+            </div>
+        </div>
     </div>
 </div>

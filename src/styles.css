@@ -37,10 +37,6 @@ body {
     border-bottom-left-radius: 500px !important;
 }
 
-.fs-1 {
-    font-size: 1.1rem !important;
-}
-
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
@@ -87,6 +83,15 @@ input:-webkit-autofill:active {
     font-size: 15px !important;
 }
 
+.swal2-title {
+    margin: 1rem 0 !important;
+    font-size: 1.6rem !important;
+}
+
+.swal2-actions {
+    margin-top: 0 !important;
+}
+
 
 /** Border Radius *******************************/
 
@@ -121,18 +126,6 @@ input:-webkit-autofill:active {
 }
 
 
-/** logo ***********************/
-
-.logo {
-    font-size: 1.2rem !important;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: #fff !important;
-    text-decoration: none !important;
-}
-
-
 /** Text Color *******************/
 
 .text-danger {
@@ -152,7 +145,7 @@ input:-webkit-autofill:active {
 }
 
 .text-white {
-    color: #ffff !important;
+    color: white !important;
 }
 
 .text-success {
@@ -168,7 +161,11 @@ input:-webkit-autofill:active {
 
 .uk-button-warning {
     background-color: #FFF05A !important;
-    /* color: #fff !important; */
+}
+
+.uk-button-success {
+    background-color: #51CF66 !important;
+    color: white !important;
 }
 
 .uk-button-danger {

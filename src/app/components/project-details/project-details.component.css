@@ -1,0 +1,77 @@
+/** Tab Nav **************************/
+
+#tab-nav li a {
+    font-size: 16px;
+}
+
+.uk-active {
+    font-weight: 500;
+}
+
+#content>div {
+    padding-top: 30px !important;
+}
+
+.uk-tab>.uk-active>a {
+    border-color: #3C91E6 !important;
+    border-bottom-width: 2px !important;
+}
+
+.fw-600 {
+    font-weight: 700 !important;
+}
+
+.fw-550 {
+    font-weight: 550 !important;
+}
+
+.fw-400 {
+    font-weight: 400;
+}
+
+.due-date {
+    font-size: 12px !important;
+    padding: 0 10px !important;
+}
+
+.due-date .material-icons {
+    font-size: 20px !important;
+}
+
+.delete:hover {
+    color: #F25F5C;
+}
+
+.img-container {
+    height: 100px !important;
+}
+
+.projectImg {
+    height: 180px;
+    width: 180px;
+    border-radius: 100%;
+    position: relative;
+    bottom: 100px;
+    right: 0;
+    left: 0;
+}
+
+.bg_1 {
+    background-color: #8EC5FC;
+    background-image: url("../../../assets/img/background/bg_1.svg"), linear-gradient(62deg, #8EC5FC 0%, #E0C3FC 100%);
+}
+
+.bg_2 {
+    background-color: #FAACA8;
+    background-image: url("../../../assets/img/background/bg_1.svg"), linear-gradient(19deg, #FAACA8 0%, #DDD6F3 100%);
+}
+
+.bg_3 {
+    background-color: #FBAB7E;
+    background-image: url("../../../assets/img/background/bg_1.svg"), linear-gradient(62deg, #FBAB7E 0%, #F7CE68 100%);
+}
+
+.bg_4 {
+    background-color: #74EBD5;
+    background-image: url("../../../assets/img/background/bg_1.svg"), linear-gradient(90deg, #74EBD5 0%, #9FACE6 100%);
+}
