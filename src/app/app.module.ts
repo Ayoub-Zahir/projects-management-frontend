@@ -11,6 +11,7 @@ import { NavbarComponent } from './components/navbar/navbar.component';
 // Modules
 import { AppRoutingModule, routingComponents } from './app-routing.module';
 
+
 @NgModule({
     declarations: [
         AppComponent,

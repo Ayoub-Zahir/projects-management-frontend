@@ -1,0 +1,51 @@
+.uk-dropdown-nav li {
+    background: whitesmoke;
+    margin: 15px 0;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: .9rem;
+}
+
+.fw-550 {
+    font-weight: 550 !important;
+}
+
+.page-active>a {
+    font-weight: 550 !important;
+    color: #0D1B1E !important;
+}
+
+.border-radius-right {
+    border-top-right-radius: 20px !important;
+    border-bottom-right-radius: 20px !important;
+}
+
+.border-radius-left {
+    border-top-left-radius: 20px !important;
+    border-bottom-left-radius: 20px !important;
+}
+
+.border-radius-top {
+    border-top-right-radius: 10px !important;
+    border-top-left-radius: 10px !important;
+}
+
+.border-radius-bottom {
+    border-bottom-right-radius: 10px !important;
+    border-bottom-left-radius: 10px !important;
+}
+
+.selected-competence div {
+    padding: 10px 15px;
+    border: solid 1px rgb(229, 229, 229);
+}
+
+.selected-competence div>button {
+    cursor: default;
+    padding: 0 15px;
+    font-size: .9rem;
+}
+
+.selected-competence div>button>span {
+    cursor: pointer;
+}

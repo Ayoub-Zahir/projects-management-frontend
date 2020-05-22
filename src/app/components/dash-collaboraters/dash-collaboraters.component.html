@@ -1,0 +1,260 @@
+<div class="uk-grid-collapse uk-child-width-expand@s" uk-grid>
+    <div class="uk-width-1-1">
+        <app-navbar></app-navbar>
+    </div>
+
+    <div id="side-bar" class="uk-width-1-5 uk-visible@l" style="max-width: 240px !important;">
+        <app-sidebar></app-sidebar>
+    </div>
+
+    <div id="mobile-side-bar" class="uk-animation-slide-left" uk-offcanvas>
+        <div class="uk-offcanvas-bar" style="width: 240px !important;">
+            <app-sidebar></app-sidebar>
+        </div>
+    </div>
+
+    <div class="uk-width-expand" style="min-height: calc(100vh - 70px);">
+        <div class="uk-container uk-section">
+            <!-- Header  -->
+            <div class="uk-clearfix uk-margin-small-bottom">
+                <h2 class="uk-float-left">Collaboraters <span [hidden]="!totalCollaboraters" class="uk-text-muted">({{totalCollaboraters}})</span></h2>
+
+                <a (click)="resetState(collaboraterForm)" href="#add-collaborater" class="uk-button uk-button-primary uk-float-right uk-text-bold uk-border-pill uk-flex uk-flex-middle" uk-toggle>
+                    <span class="material-icons uk-text-middle">add</span> Add collaborater
+                </a>
+            </div>
+
+            <!-- Body -->
+            <div class="uk-card uk-card-default uk-padding border-radius-20" style="padding: 25px;">
+                <!-- Error-->
+                <h3 *ngIf="httpError" class="uk-text-center uk-margin-remove">{{httpError}}</h3>
+
+                <!-- Loading  -->
+                <h3 *ngIf="loading" class="uk-text-center uk-margin-remove">
+                    <div uk-spinner="ratio: 1.5"></div>
+                </h3>
+
+                <!-- No task  found -->
+                <h3 *ngIf="!httpError && collaboraters && collaboraters.length === 0" class="uk-text-center uk-margin-remove">There is no collaboraters in the system ...</h3>
+
+                <!-- Table  -->
+                <div class="uk-overflow-auto" *ngIf="!loading && !httpError && collaboraters && collaboraters.length !== 0">
+                    <table class="uk-table uk-table-divider uk-text-nowrap table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Photo</th>
+                                <th>name</th>
+                                <th>tasks associated</th>
+                                <th>Competences</th>
+                                <th>More</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr class="uk-box-shadow-hover-medium fw-550" *ngFor="let collaborater of collaboraters">
+                                <td class="uk-text-middle">{{collaborater.id}}</td>
+
+                                <td style="cursor: pointer;">
+                                    <img src="{{collaborater.photoURL}}" alt="{{collaborater.lastName}}Img" class="uk-border-circle uk-preserve-width" width="50" height="50">
+                                </td>
+
+                                <td class="uk-text-middle">
+                                    {{collaborater.firstName +' '+ collaborater.lastName | titlecase}} <br>
+                                    <span class="uk-text-muted" style="font-size: .9rem;">{{collaborater.email}}</span>
+                                </td>
+
+                                <!-- Tasks -->
+                                <td class="uk-text-middle">
+                                    <button class="uk-button uk-button-default fw-550 uk-border-pill" type="button">{{collaborater.tasks.length}} tasks</button>
+
+                                    <div *ngIf="collaborater.tasks.length != 0" uk-dropdown="mode: click" style="padding: 5px 15px; border-radius: 10px;">
+                                        <ul *ngFor="let task of collaborater.tasks" class="uk-nav uk-dropdown-nav">
+                                            <li class="uk-text-center">
+                                                {{task.task.name}}
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                </td>
+
+                                <!-- Competences -->
+                                <td class="uk-text-middle">
+                                    <button class="uk-button uk-button-default fw-550 uk-border-pill" type="button">{{collaborater.competences.length}} Competences</button>
+
+                                    <div *ngIf="collaborater.competences.length != 0" uk-dropdown="mode: click" style="padding: 5px 15px; border-radius: 10px;">
+                                        <ul *ngFor="let competence of collaborater.competences" class="uk-nav uk-dropdown-nav">
+                                            <li class="uk-text-center">
+                                                {{competence.name}}
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                </td>
+
+                                <!-- More  -->
+                                <td>
+                                    <a (click)="setEditState(collaborater)" class="uk-icon-button text-primary" uk-icon="pencil"></a>
+
+                                    <a (click)="deleteCollaborater(collaborater.id)" class="uk-icon-button uk-margin-small-right text-danger" uk-icon="trash"></a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Pagination -->
+                    <ul class="uk-pagination uk-flex-center uk-flex-middle" uk-margin>
+                        <li>
+                            <a (click)="selectPage(currentPage - 1)"><span uk-pagination-previous></span>Previous</a>
+                        </li>
+                        <li *ngFor="let page of pageNumbers; index as i" [class.page-active]="i == currentPage">
+                            <a (click)="selectPage(i)">{{i+1}}</a>
+                        </li>
+                        <li>
+                            <a (click)="selectPage(currentPage + 1)">Next<span uk-pagination-next></span></a>
+                        </li>
+                        <li>
+                            <div class="rows-selector">
+                                <div uk-form-custom="target: true">
+                                    <input (keyup.enter)="setRowsPerPage(rows)" class="uk-input uk-form-width-small border-radius-left" type="number" min="1" placeholder="Rows per page" #rows>
+                                </div>
+                                <button (click)="setRowsPerPage(rows)" class="uk-button uk-button-secondary uk-text-bold border-radius-right" style="padding: 0 15px;">show</button>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Add collaborater modal -->
+            <div id="add-collaborater" class="uk-flex-top" uk-modal>
+                <div class="uk-modal-dialog uk-margin-auto-vertical">
+                    <button class="uk-modal-close-default" type="button" uk-close></button>
+
+                    <!-- modal-header -->
+                    <div class="uk-modal-header" style="border-top-left-radius: 20px; border-top-right-radius: 20px;">
+                        <h2 class="uk-modal-title">Add New Collaborater</h2>
+                    </div>
+
+                    <!-- uk-modal-body -->
+                    <div class="fw-550 uk-modal-body" style="padding-bottom: 0;">
+                        <!-- Form -->
+                        <form (ngSubmit)="onSubmitCollaborater(collaboraterForm)" #collaboraterForm="ngForm">
+                            <fieldset class="uk-fieldset">
+                                <!-- Name field  -->
+                                <div class="uk-margin">
+                                    <div class="uk-form-controls" uk-grid>
+                                        <!-- First Name  -->
+                                        <div class="uk-width-1-2@s">
+                                            <label class="uk-form-label uk-text-bold" for="form-stacked-text">
+                                                First name
+                                                <span class="uk-text-danger">*</span>
+                                            </label>
+                                            <input class="uk-input border-radius-10 uk-margin-small-top" [class.uk-form-danger]="firstName.invalid && firstName.touched" type="text" placeholder="jhon" name="firstName" [(ngModel)]="currentCollaborater.firstName" #firstName="ngModel" required minlength="3">
+
+                                            <!-- Validation errors -->
+                                            <div *ngIf="firstName.errors && firstName.touched">
+                                                <p [hidden]="!firstName.errors?.required" class="uk-text-danger" style="margin-top: 6px;font-size: .9rem;">First name required.</p>
+                                                <p [hidden]="!firstName.errors?.minlength" class="uk-text-danger" style="margin-top: 6px;font-size: .9rem;">Must be more at least 3 caracters.</p>
+                                            </div>
+                                        </div>
+
+                                        <!-- Last Name  -->
+                                        <div class="uk-width-1-2@s">
+                                            <label class="uk-form-label uk-text-bold" for="form-stacked-text">
+                                                Last name
+                                                <span class="uk-text-danger">*</span>
+                                            </label>
+                                            <input class="uk-input border-radius-10 uk-margin-small-top" [class.uk-form-danger]="lastName.invalid && lastName.touched" name="lastName" type="text" placeholder="doh" [(ngModel)]="currentCollaborater.lastName" #lastName="ngModel" required minlength="3">
+
+                                            <!-- Validation errors -->
+                                            <div *ngIf="lastName.errors && lastName.touched" style="margin-bottom: 0 !important;">
+                                                <p [hidden]="!lastName.errors?.required" class="uk-text-danger" style="margin: 6px 0 0 0; font-size: .9rem;">Last Name required.</p>
+                                                <p [hidden]="!lastName.errors?.minlength" class="uk-text-danger" style="margin-top: 6px;font-size: .9rem;">Must be more at least 3 caracters.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Email field  -->
+                                <div class="uk-margin">
+                                    <label class="uk-form-label uk-text-bold" for="form-stacked-text">
+                                        Email <span class="uk-text-danger">*</span>
+                                    </label>
+
+                                    <div class="uk-form-controls uk-margin-small-top">
+                                        <input class="uk-input border-radius-10" [class.uk-form-danger]="email.invalid && email.touched" type="text" placeholder="example@gmail.com" name="email" [(ngModel)]="currentCollaborater.email" #email="ngModel" required pattern="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?">
+                                    </div>
+
+                                    <!-- Validation errors -->
+                                    <div *ngIf="email.errors && email.touched">
+                                        <p [hidden]="!email.errors?.required" class="uk-text-danger" style="margin-top: 6px;font-size: .9rem;">Email required.</p>
+                                        <p [hidden]="!email.errors?.pattern" class="uk-text-danger" style="margin-top: 6px;font-size: .9rem;">Email is not valid.</p>
+                                        <p [hidden]="!email.errors?.emailExist" class="uk-text-danger" style="margin-top: 6px;font-size: .9rem;">The email address is already in use by another user.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- Selected competences  -->
+                                <div *ngIf="currentCollaborater.competences.length > 0" class="uk-margin selected-competence">
+                                    <label class="uk-form-label uk-text-bold" for="form-stacked-text">
+                                        Selected competences
+                                    </label>
+
+                                    <div class="uk-card uk-card-body border-radius-10 uk-margin-small-top">
+                                        <button *ngFor="let competence of currentCollaborater.competences" class="uk-button uk-button-default uk-border-pill uk-margin-small-right" type="button">
+                                            {{competence.name}} 
+                                            <span (click)="removeCompetence(competence)" uk-icon="icon: close"></span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Add Competences  -->
+                                <div class="uk-margin">
+                                    <label class="uk-form-label uk-text-bold" for="form-stacked-text">
+                                        Chose competences
+                                    </label>
+
+                                    <input (keyup)="searchCompetence(keyword.value, $event)" class="uk-input border-radius-top uk-margin-small-top" type="text" placeholder="Search for competence ..." #keyword>
+
+                                    <div *ngIf="competences.length > 0" class="uk-card uk-card-default uk-card-body border-radius-bottom" style="padding: 5px 15px">
+                                        <ul *ngFor="let competence of competences" class="uk-nav uk-dropdown-nav">
+                                            <li>
+                                                <label>
+                                                    <input (click)="onChecked(competence)" class="uk-checkbox uk-margin-right" type="checkbox" [checked]="isSelected(competence)"> 
+                                                    {{competence.name}}
+                                                </label>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <!-- Photo field -->
+                                <div class="uk-margin">
+                                    <label class="uk-form-label uk-text-bold" for="form-stacked-text ">Picture
+                                        URL</label>
+                                    <input (focus)="competences=[];keyword.value=''" class="uk-input border-radius-10 uk-margin-small-top" [class.uk-form-danger]="photoURL.invalid && photoURL.touched" type="text" placeholder="https://photo.png" name="photoURL" #photoURL="ngModel" [(ngModel)]="currentCollaborater.photoURL"
+                                        pattern="(http|ftp|https)://[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:/~+#-]*[\w@?^=%&amp;/~+#-])?">
+
+                                    <!-- Validation errors -->
+                                    <div *ngIf="photoURL.errors?.pattern && photoURL.touched">
+                                        <p class="uk-text-danger" style="margin-top: 6px;font-size: .9rem;">Invalid picture URL.</p>
+                                    </div>
+                                </div>
+
+                                <div class="uk-margin">
+                                    <button class="uk-button uk-button-primary uk-width-1-5 uk-text-bold uk-border-pill" [class.uk-button-warning]="!addState" type="submit">
+                                        {{addState ? 'add' : 'update'}}
+                                    </button>
+                                </div>
+                            </fieldset>
+                        </form>
+                    </div>
+
+                    <!-- uk-modal-footer  -->
+                    <div class="uk-modal-footer uk-text-right">
+                        <a (click)="resetState(collaboraterForm)" class="uk-button uk-button-secondary uk-text-bold uk-border-pill uk-modal-close">close</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

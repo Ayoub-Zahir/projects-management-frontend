@@ -1,0 +1,26 @@
+.uk-dropdown-nav li {
+    background: whitesmoke;
+    margin: 15px 0;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: .9rem;
+}
+
+.fw-550 {
+    font-weight: 550 !important;
+}
+
+.page-active>a {
+    font-weight: 550 !important;
+    color: #0D1B1E !important;
+}
+
+.border-radius-right {
+    border-top-right-radius: 20px !important;
+    border-bottom-right-radius: 20px !important;
+}
+
+.border-radius-left {
+    border-top-left-radius: 20px !important;
+    border-bottom-left-radius: 20px !important;
+}

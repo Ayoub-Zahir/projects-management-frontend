@@ -43,7 +43,7 @@
 }
 
 .img-container {
-    height: 100px !important;
+    height: 75px !important;
 }
 
 .projectImg {
@@ -51,7 +51,7 @@
     width: 180px;
     border-radius: 100%;
     position: relative;
-    bottom: 100px;
+    bottom: 120px;
     right: 0;
     left: 0;
 }

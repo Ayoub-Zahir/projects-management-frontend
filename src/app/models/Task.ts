@@ -1,9 +1,11 @@
+
 export interface Task{
-    id: number,
+    id?: number,
     name: string,
     hourlyVolume: number,
     isComplete: boolean,
-    startDate: Date,
+    startDate: Date | string,
     endDate: Date,
-    description: string
+    description: string,
+    project?: {id: number}
 }

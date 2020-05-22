@@ -7,6 +7,12 @@
         <app-sidebar></app-sidebar>
     </div>
 
+    <div id="mobile-side-bar" class="uk-animation-slide-left" uk-offcanvas>
+        <div class="uk-offcanvas-bar" style="width: 240px !important;">
+            <app-sidebar></app-sidebar>
+        </div>
+    </div>
+
     <div class="uk-width-expand" style="min-height: calc(100vh - 70px);">
         <div class="uk-container uk-section">
             <!-- Tab navigation  -->
@@ -21,7 +27,6 @@
 
             <!-- content -->
             <div id="content" class="uk-switcher">
-
                 <!-- Project info  -->
                 <div id="project-details">
                     <!-- Header  -->
@@ -34,10 +39,11 @@
                     </div>
 
                     <!-- Card -->
-                    <div class="uk-card uk-card-default uk-padding border-radius-20" style="margin: auto;">
-                        <!-- Error...  -->
+                    <div class="uk-card uk-card-default uk-padding border-radius-20" style="padding: 25px 40px;">
+                        <!-- Error-->
                         <h3 *ngIf="httpError" class="uk-text-center uk-margin-remove">{{httpError}}</h3>
 
+                        <!-- Loading -->
                         <h3 *ngIf="loading" class="uk-text-center uk-margin-remove">
                             <div uk-spinner="ratio: 1.5"></div>
                         </h3>
@@ -45,14 +51,17 @@
                         <!-- Content  -->
                         <div *ngIf="!httpError && currentProject">
                             <div class="img-container uk-flex uk-flex-center" style="margin: 0 !important;">
-                                <div class="projectImg bg_{{currentProject.id}}" [class.bg_4]="currentProject.id > 3"></div>
+                                <div class="projectImg bg_{{currentProject.id}}" [class.bg_4]="currentProject.id > 3">
+                                </div>
                             </div>
                             <!-- User Name -->
-                            <h1 class="uk-text-center" style="margin-top: 0 !important;">{{currentProject.name | titlecase}}</h1>
+                            <h1 class="uk-text-center" style="margin-top: 0 !important;">
+                                {{currentProject.name | titlecase}}</h1>
 
                             <!-- Due Date -->
                             <button class="uk-button due-date border-radius-10 uk-flex uk-flex-middle fw-600" [class.uk-button-warning]="currentProject.daysLeft > 3 && currentProject.daysLeft <= 6" [class.uk-button-danger]="currentProject.daysLeft <= 3" style="margin: auto;">
-                                <span class="material-icons uk-margin-small-right">schedule</span> {{currentProject.daysLeft}} days left
+                                <span class="material-icons uk-margin-small-right">schedule</span>
+                                {{currentProject.daysLeft}} days left
                             </button>
 
                             <!-- More info  -->
@@ -81,7 +90,8 @@
 
                                 <li *ngIf="currentProject.description" class="uk-flex uk-flex-middle fw-400">
                                     <span class="material-icons text-primary uk-margin-small-right">description</span>
-                                    <span class="uk-text-bold uk-margin-small-right" style="min-width: 96px;"> Description : </span>{{currentProject.description}}
+                                    <span class="uk-text-bold uk-margin-small-right" style="min-width: 96px;">
+                                        Description : </span>{{currentProject.description}}
                                 </li>
                             </ul>
                         </div>
@@ -90,76 +100,135 @@
 
                 <!-- Project Tasks  -->
                 <div id="project-tasks">
+                    <!-- Header  -->
                     <div class="uk-clearfix uk-margin-small-bottom">
                         <h2 class="uk-float-left">Project Tasks</h2>
 
-                        <button class="uk-button uk-button-primary uk-float-right uk-text-bold uk-border-pill uk-flex uk-flex-middle" routerLink="/tasks/add">
+                        <button class="uk-button uk-button-primary uk-float-right uk-text-bold uk-border-pill uk-flex uk-flex-middle" uk-toggle="target: #add-form">
                             <span class="material-icons uk-text-middle">add</span> Add Task
                         </button>
                     </div>
 
-                    <!-- Card -->
-                    <div class="uk-card uk-card-default uk-padding border-radius-20" style="margin: auto;">
-                        <!-- No project found...  -->
-                        <h3 *ngIf="httpError" class="uk-text-center uk-margin-remove">{{httpError}}</h3>
+                    <!-- Body -->
+                    <div class="uk-card uk-card-default uk-padding border-radius-20" style="padding: 25px;">
+                        <!-- Error-->
+                        <h3 *ngIf="!loading && httpError" class="uk-text-center uk-margin-remove">{{httpError}}</h3>
 
                         <!-- Loading  -->
                         <h3 *ngIf="loading" class="uk-text-center uk-margin-remove">
                             <div uk-spinner="ratio: 1.5"></div>
                         </h3>
 
-                        <!-- No task  found...  -->
-                        <h3 *ngIf="!httpError && currentProject && currentProject.tasks.length === 0" class="uk-text-center uk-margin-remove">There is no tasks assiciated with this project.</h3>
+                        <!-- No task  found -->
+                        <h3 *ngIf="!loading && !httpError && currentProject && currentProject.tasks.length === 0" class="uk-text-center uk-margin-remove">There is no tasks assiciated with this project.</h3>
 
-                        <!-- Content  -->
-                        <div *ngIf="!httpError && currentProject && currentProject.tasks.length !== 0">
-                            <table class="uk-table uk-table-divider uk-text-nowrap table-hover">
-                                <thead>
-                                    <tr class="uk-text-center">
-                                        <td>#ID</td>
-                                        <th>Task</th>
-                                        <th>Hourly Volume</th>
-                                        <th>Start date</th>
-                                        <th>End date</th>
-                                        <th>State</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
+                        <!-- Table  -->
+                        <div class="uk-overflow-auto" *ngIf="!loading && !httpError && currentProject && currentProject.tasks.length !== 0">
+                            <form (ngSubmit)="addTask(addTaskForm)" #addTaskForm="ngForm">
+                                <table class="uk-table uk-table-divider uk-text-nowrap table-hover">
+                                    <thead>
+                                        <tr class="uk-text-center">
+                                            <td>#ID</td>
+                                            <th>Task</th>
+                                            <th>Hourly Volume</th>
+                                            <th>Start date</th>
+                                            <th>End date</th>
+                                            <th>State</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
 
-                                <tbody>
-                                    <tr class="uk-box-shadow-hover-medium fw-550" *ngFor="let task of currentProject.tasks">
-                                        <td>{{task.id}}</td>
-                                        <td>{{task.name}}</td>
-                                        <td>{{task.hourlyVolume}}</td>
-                                        <td>{{task.startDate | date}}</td>
-                                        <td>{{task.endDate | date}}</td>
-                                        <td [class.text-success]="task.isComplete">{{task.isComplete ? 'Completed' : 'In progress'}}</td>
-                                        <td>
-                                            <button class="uk-button uk-button-default uk-border-pill uk-text-bold" style="padding: 0 18px !important;">
+                                    <tbody>
+                                        <tr class="uk-box-shadow-hover-medium fw-550" *ngFor="let task of currentProject.tasks">
+                                            <td>{{task.id}}</td>
+                                            <td>{{task.name}}</td>
+                                            <td>{{task.hourlyVolume}}</td>
+                                            <td>{{task.startDate | date}}</td>
+                                            <td>{{task.endDate | date}}</td>
+                                            <td [class.text-success]="task.isComplete">
+                                                {{task.isComplete ? 'Completed' : 'In progress'}}</td>
+                                            <td>
+                                                <button class="uk-button uk-button-default uk-border-pill uk-text-bold" style="padding: 0 18px !important;">
                                                 <span uk-icon="more"></span>
                                             </button>
-                                            <div class="border-radius-10" uk-dropdown="pos: bottom-justify; mode: click" style="padding: 20px; min-width: 150px !important;">
-                                                <ul class="uk-nav uk-dropdown-nav">
-                                                    <li>
-                                                        <a routerLink="/tasks/{{task.id}}" class="details"><span class="uk-margin-small-right" uk-icon="icon: info"></span>Details
+                                                <div class="border-radius-10" uk-dropdown="pos: bottom-justify; mode: click" style="padding: 20px; min-width: 150px !important;">
+                                                    <ul class="uk-nav uk-dropdown-nav">
+                                                        <li>
+                                                            <a routerLink="/tasks/{{task.id}}" class="details"><span
+                                                                class="uk-margin-small-right"
+                                                                uk-icon="icon: info"></span>Details
                                                         </a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="edit" routerLink="/task/edit/{{task.id}}">
-                                                            <span class="uk-margin-small-right" uk-icon="icon: pencil"></span> Edit
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="delete">
-                                                            <span class="uk-margin-small-right" uk-icon="icon: trash"></span> Delete
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                                                        </li>
+                                                        <li>
+                                                            <a class="edit" routerLink="/task/edit/{{task.id}}">
+                                                                <span class="uk-margin-small-right" uk-icon="icon: pencil"></span> Edit
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="delete">
+                                                                <span class="uk-margin-small-right" uk-icon="icon: trash"></span> Delete
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                        <!-- Add Task  -->
+                                        <tr hidden id="add-form" style="background-color: whitesmoke;">
+                                            <td class="uk-text-middle">#</td>
+                                            <!-- Task Name  -->
+                                            <td>
+                                                <input class="uk-input border-radius-10" [class.uk-form-danger]="taskName.invalid && taskName.touched" type="text" placeholder="Task name" name="name" [(ngModel)]="currentTask.name" #taskName="ngModel" required>
+
+                                                <p *ngIf="taskName.errors?.required && taskName.touched" class="uk-text-danger" style="margin-top: 6px;font-size: .9rem;">Task name required.</p>
+                                            </td>
+
+                                            <!-- Hours  -->
+                                            <td>
+                                                <input class="uk-input border-radius-10" [class.uk-form-danger]="hourlyVolume.invalid && hourlyVolume.touched" type="number" min="0" placeholder="100 hours" name="hourlyVolume" [(ngModel)]="currentTask.hourlyVolume" #hourlyVolume="ngModel" required>
+
+                                                <p *ngIf="hourlyVolume.errors?.required && hourlyVolume.touched" class="uk-text-danger" style="margin-top: 6px;font-size: .9rem;">Hourly volume required.</p>
+                                            </td>
+
+                                            <!-- Start Date  -->
+                                            <td>
+                                                <div class="uk-inline">
+                                                    <span class="uk-form-icon" uk-icon="icon: calendar"></span>
+
+                                                    <input class="uk-input border-radius-10" [class.uk-form-danger]="startDate.invalid && startDate.touched" type="date" name="startDate" [(ngModel)]="currentTask.startDate" #startDate="ngModel" required>
+                                                </div>
+
+                                                <p *ngIf="startDate.errors?.required && startDate.touched" class="uk-text-danger" style="margin-top: 6px;font-size: .9rem;">Start Date required.</p>
+                                            </td>
+
+                                            <!-- End Date  -->
+                                            <td>
+                                                <div class="uk-inline">
+                                                    <span class="uk-form-icon" uk-icon="icon: calendar"></span>
+
+                                                    <input class="uk-input border-radius-10" [class.uk-form-danger]="endDate.invalid && endDate.touched" type="date" name="endDate" [(ngModel)]="currentTask.endDate" #endDate="ngModel" required>
+                                                </div>
+
+                                                <p *ngIf="endDate.errors?.required && endDate.touched" class="uk-text-danger" style="margin-top: 6px;font-size: .9rem;">End Date required.</p>
+                                            </td>
+
+                                            <!-- State  -->
+                                            <td>
+                                                <select class="uk-select border-radius-10" id="form-stacked-select" name="state" [ngModel]="'In progress'">
+                                                    <option>In progress</option>
+                                                    <option class=" text-success ">Done</option>
+                                                </select>
+                                            </td>
+
+                                            <!-- Button  -->
+                                            <td>
+                                                <button type="submit " class="uk-button uk-button-primary uk-border-pill uk-text-bold " style="padding: 0 18px !important; ">Add</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </form>
                         </div>
                     </div>
                 </div>

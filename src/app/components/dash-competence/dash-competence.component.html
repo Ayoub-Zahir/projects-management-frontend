@@ -1,0 +1,158 @@
+<div class="uk-grid-collapse uk-child-width-expand@s" uk-grid>
+    <div class="uk-width-1-1">
+        <app-navbar></app-navbar>
+    </div>
+
+    <div class="uk-width-1-5 uk-visible@l" style="max-width: 240px !important;">
+        <app-sidebar></app-sidebar>
+    </div>
+
+    <div id="mobile-side-bar" class="uk-animation-slide-left" uk-offcanvas>
+        <div class="uk-offcanvas-bar" style="width: 240px !important;">
+            <app-sidebar></app-sidebar>
+        </div>
+    </div>
+
+    <div class="uk-width-expand" style="min-height: calc(100vh - 70px);">
+        <div class="uk-container uk-section">
+            <!-- Header  -->
+            <div class="uk-clearfix uk-margin-small-bottom">
+                <h2 class="uk-float-left">Competences <span [hidden]="!totalCompetences" class="uk-text-muted">({{totalCompetences}})</span></h2>
+
+                <a (click)="resetState(competenceForm)" href="#add-competence" class="uk-button uk-button-primary uk-float-right uk-text-bold uk-border-pill uk-flex uk-flex-middle" uk-toggle>
+                    <span class="material-icons uk-text-middle">add</span> Add Competence
+                </a>
+            </div>
+
+            <!-- Body -->
+            <div class="uk-card uk-card-default uk-padding border-radius-20" style="padding: 25px;">
+                <!-- Error-->
+                <h3 *ngIf="httpError" class="uk-text-center uk-margin-remove">{{httpError}}</h3>
+
+                <!-- Loading  -->
+                <h3 *ngIf="loading" class="uk-text-center uk-margin-remove">
+                    <div uk-spinner="ratio: 1.5"></div>
+                </h3>
+
+                <!-- No task  found -->
+                <h3 *ngIf="!httpError && competences && competences.length === 0" class="uk-text-center uk-margin-remove">There is no competences in the system ...</h3>
+
+                <!-- Table  -->
+                <div class="uk-overflow-auto" *ngIf="!loading && !httpError && competences && competences.length !== 0">
+                    <table class="uk-table uk-table-divider uk-text-nowrap table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Competence</th>
+                                <th>tasks associated</th>
+                                <th>Collaboraters</th>
+                                <th>More</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr class="uk-box-shadow-hover-medium fw-550" *ngFor="let competence of competences">
+                                <td>{{competence.id}}</td>
+                                <td>{{competence.name}}</td>
+
+                                <!-- Tasks -->
+                                <td class="uk-text-middle">
+                                    <button class="uk-button uk-button-default fw-550 uk-border-pill" type="button">{{competence.tasks.length}} tasks</button>
+
+                                    <div *ngIf="competence.tasks.length != 0" uk-dropdown="mode: click" style="padding: 5px 15px; border-radius: 10px;">
+                                        <ul *ngFor="let task of competence.tasks" class="uk-nav uk-dropdown-nav">
+                                            <li class="uk-text-center">
+                                                ID {{task.id}} : {{task.name}}
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                </td>
+
+                                <!-- Collaboraters -->
+                                <td class="uk-text-middle">
+                                    <img *ngFor="let collaborater of competence.collaboraters" src="{{collaborater.photoURL}}" class="uk-border-circle uk-text-middle uk-margin-small-right" width="40" height="40" [attr.uk-tooltip]="collaborater.firstName +' '+collaborater.lastName">
+
+                                    <button *ngIf="competence.collaboraters.length === 0" class="uk-button fw-550 uk-button-default uk-border-pill" type="button">no one</button>
+                                </td>
+
+                                <!-- More  -->
+                                <td>
+                                    <a (click)="setEditState(competence)" class="uk-icon-button text-primary" uk-icon="pencil"></a>
+
+                                    <a (click)="deleteCompetence(competence.id)" class="uk-icon-button uk-margin-small-right text-danger" uk-icon="trash"></a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Pagination -->
+                    <ul class="uk-pagination uk-flex-center uk-flex-middle" uk-margin>
+                        <li>
+                            <a (click)="selectPage(currentPage - 1)"><span uk-pagination-previous></span>Previous</a>
+                        </li>
+                        <li *ngFor="let page of pageNumbers; index as i" [class.page-active]="i == currentPage">
+                            <a (click)="selectPage(i)">{{i+1}}</a>
+                        </li>
+                        <li>
+                            <a (click)="selectPage(currentPage + 1)">Next<span uk-pagination-next></span></a>
+                        </li>
+                        <li>
+                            <div class="rows-selector">
+                                <div uk-form-custom="target: true">
+                                    <input (keyup.enter)="setRowsPerPage(rows)" class="uk-input uk-form-width-small border-radius-left" type="number" min="1" placeholder="Rows per page" #rows>
+                                </div>
+                                <button (click)="setRowsPerPage(rows)" class="uk-button uk-button-secondary uk-text-bold border-radius-right" style="padding: 0 15px;">show</button>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Add competence modal -->
+            <div id="add-competence" class="uk-flex-top" uk-modal>
+                <div class="uk-modal-dialog uk-margin-auto-vertical">
+                    <button class="uk-modal-close-default" type="button" uk-close></button>
+
+                    <div class="uk-modal-header" style="border-top-left-radius: 20px; border-top-right-radius: 20px;">
+                        <h2 class="uk-modal-title">Add Competence</h2>
+                    </div>
+
+                    <div class="uk-modal-body" style="padding-bottom: 0;">
+                        <form (ngSubmit)="onSubmitCompetence(competenceForm)" class="fw-550" #competenceForm="ngForm">
+                            <fieldset class="uk-fieldset">
+                                <!-- Competence name field  -->
+                                <div class="uk-margin">
+                                    <label class="uk-form-label uk-text-bold" for="form-stacked-text">
+                                        Competence Name
+                                        <span class="uk-text-danger">*</span>
+                                    </label>
+                                    <div class="uk-form-controls uk-margin-small-top" uk-grid>
+                                        <div class="uk-width-expand">
+                                            <input class="uk-input border-radius-left" [class.uk-form-danger]="competenceName.invalid && competenceName.touched" type="text" placeholder="competence name" name="name" [(ngModel)]="currentCompetence.name" #competenceName="ngModel" required minlength="3">
+                                        </div>
+
+                                        <div class="uk-width-1-5 uk-padding-remove">
+                                            <button class="uk-button uk-button-primary uk-width-1-1 uk-text-bold border-radius-right" [class.uk-button-warning]="!addState" type="submit">{{addState ? 'add' : 'update'}}</button>
+                                        </div>
+
+                                    </div>
+
+                                    <!-- Validation errors -->
+                                    <div *ngIf="competenceName.errors && competenceName.touched">
+                                        <p [hidden]="!competenceName.errors?.required" class="uk-text-danger" style="margin-top: 6px;font-size: .9rem;">Competence name required.</p>
+                                        <p [hidden]="!competenceName.errors?.minlength" class="uk-text-danger" style="margin-top: 6px;font-size: .9rem;">Must be more at least 3 caracters.</p>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </form>
+                    </div>
+
+                    <div class="uk-modal-footer uk-text-right">
+                        <a class="uk-button uk-button-secondary uk-text-bold uk-border-pill uk-modal-close">close</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

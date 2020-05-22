@@ -7,11 +7,17 @@
         <app-sidebar></app-sidebar>
     </div>
 
+    <div id="mobile-side-bar" class="uk-animation-slide-left" uk-offcanvas>
+        <div class="uk-offcanvas-bar" style="width: 240px !important;">
+            <app-sidebar></app-sidebar>
+        </div>
+    </div>
+
     <div class="uk-width-expand" style="min-height: calc(100vh - 70px);">
         <div class="uk-container uk-section">
             <h2>Enter project details</h2>
 
-            <form (ngSubmit)="onAddProject(addProjectform)" #addProjectform="ngForm" class="uk-form-stacked uk-card uk-card-default uk-padding border-radius-20">
+            <form (ngSubmit)="onAddProject(addProjectform)" #addProjectform="ngForm" class="uk-form-stacked uk-card uk-card-default uk-padding border-radius-20 fw-550">
                 <fieldset class="uk-fieldset">
                     <!-- Project name field  -->
                     <div class="uk-margin">

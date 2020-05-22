@@ -7,15 +7,20 @@ import { AddProjectComponent } from './components/add-project/add-project.compon
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { ProjectDetailsComponent } from './components/project-details/project-details.component';
 import { EditProjectComponent } from './components/edit-project/edit-project.component';
+import { DashCompetenceComponent } from './components/dash-competence/dash-competence.component';
+import { DashCollaboratersComponent } from './components/dash-collaboraters/dash-collaboraters.component';
 
 const routes: Routes = [
     { path: "", redirectTo: '/projects', pathMatch: 'full' },
-    // Project Management --------------------------------------------------------------------
+    // Project Management ----------------------------------------------
     { path: "projects", component: DashProjectsComponent},
     { path: "projects/add", component: AddProjectComponent},
     { path: "projects/:id", component: ProjectDetailsComponent},
     { path: "projects/edit/:id", component: EditProjectComponent},
-    //------------------------------------------------------------------
+    // Competence Management ----------------------------------------------
+    { path: "competences", component: DashCompetenceComponent},
+    // Collaborater Management ----------------------------------------------
+    { path: "collaboraters", component: DashCollaboratersComponent},
     { path: "**", component: PageNotFoundComponent}
 ];
 
@@ -24,4 +29,4 @@ const routes: Routes = [
     exports: [RouterModule]
 })
 export class AppRoutingModule { }
-export const routingComponents = [DashProjectsComponent, AddProjectComponent, PageNotFoundComponent, ProjectDetailsComponent, EditProjectComponent];
+export const routingComponents = [DashProjectsComponent, AddProjectComponent, PageNotFoundComponent, ProjectDetailsComponent, EditProjectComponent, DashCompetenceComponent, DashCollaboratersComponent];

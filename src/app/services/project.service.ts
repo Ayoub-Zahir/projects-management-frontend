@@ -15,9 +15,7 @@ export class ProjectService {
 
     private URL: string = `${environment.apiURL}/projects`;
 
-    constructor(
-        private http: HttpClient
-    ) { }
+    constructor(private http: HttpClient) { }
 
     getProjects(): Observable<Project[]>{
         return this.http.get<Project[]>(this.URL, httpOptions);
