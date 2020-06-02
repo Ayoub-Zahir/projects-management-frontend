@@ -66,7 +66,7 @@
 
                                 <!-- Tasks -->
                                 <td class="uk-text-middle">
-                                    <button class="uk-button uk-button-default fw-550 uk-border-pill" type="button">{{collaborater.tasks.length}} tasks</button>
+                                    <button class="uk-button uk-button-default uk-border-pill" type="button" style="padding: 0 15px; text-transform: capitalize;">{{collaborater.tasks.length}} tasks</button>
 
                                     <div *ngIf="collaborater.tasks.length != 0" uk-dropdown="mode: click" style="padding: 5px 15px; border-radius: 10px;">
                                         <ul *ngFor="let task of collaborater.tasks" class="uk-nav uk-dropdown-nav">
@@ -80,7 +80,7 @@
 
                                 <!-- Competences -->
                                 <td class="uk-text-middle">
-                                    <button class="uk-button uk-button-default fw-550 uk-border-pill" type="button">{{collaborater.competences.length}} Competences</button>
+                                    <button class="uk-button uk-button-default uk-border-pill" type="button" style="padding: 0 15px; text-transform: capitalize;">{{collaborater.competences.length}} Competences</button>
 
                                     <div *ngIf="collaborater.competences.length != 0" uk-dropdown="mode: click" style="padding: 5px 15px; border-radius: 10px;">
                                         <ul *ngFor="let competence of collaborater.competences" class="uk-nav uk-dropdown-nav">
@@ -103,7 +103,7 @@
                     </table>
 
                     <!-- Pagination -->
-                    <ul class="uk-pagination uk-flex-center uk-flex-middle" uk-margin>
+                    <ul *ngIf="pageNumbers" class="uk-pagination uk-flex-center uk-flex-middle" uk-margin>
                         <li>
                             <a (click)="selectPage(currentPage - 1)"><span uk-pagination-previous></span>Previous</a>
                         </li>

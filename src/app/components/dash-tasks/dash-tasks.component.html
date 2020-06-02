@@ -1,0 +1,449 @@
+<div class="uk-grid-collapse uk-child-width-expand@s" uk-grid>
+    <div class="uk-width-1-1">
+        <app-navbar></app-navbar>
+    </div>
+
+    <div id="side-bar" class="uk-width-1-5 uk-visible@xl" style="max-width: 240px !important;">
+        <app-sidebar></app-sidebar>
+    </div>
+
+    <div id="mobile-side-bar" class="uk-animation-slide-left" uk-offcanvas>
+        <div class="uk-offcanvas-bar" style="width: 240px !important;">
+            <app-sidebar></app-sidebar>
+        </div>
+    </div>
+
+    <div class="uk-width-expand" style="min-height: calc(100vh - 70px);">
+        <div class="uk-container uk-section">
+            <!-- Tab navigation  -->
+            <ul id="tab-nav" uk-tab>
+                <li>
+                    <a routerLink="/projects/{{projectId}}">Project Details</a>
+                </li>
+                <li class="uk-active">
+                    <a routerLink="/projects/{{projectId}}/tasks">Project Tasks</a>
+                </li>
+            </ul>
+
+            <!-- content -->
+            <div id="content">
+                <div id="project-tasks">
+                    <!-- Header  -->
+                    <div class="uk-clearfix uk-margin-small-bottom">
+                        <h2 class="uk-float-left">Project Tasks</h2>
+
+                        <button class="uk-button uk-button-primary uk-float-right uk-text-bold uk-border-pill uk-flex uk-flex-middle" uk-toggle="target: #offcanvas-flip">
+                            <span class="material-icons uk-text-middle">add</span> Add Task
+                        </button>
+                    </div>
+
+                    <!-- Body -->
+                    <div class="uk-card uk-card-default uk-padding border-radius-20" style="padding: 25px;">
+                        <!-- Error-->
+                        <h3 *ngIf="!loading && httpError" class="uk-text-center uk-margin-remove">{{httpError}}</h3>
+
+                        <!-- Loading  -->
+                        <h3 *ngIf="loading" class="uk-text-center uk-margin-remove">
+                            <div uk-spinner="ratio: 1.5"></div>
+                        </h3>
+
+                        <!-- No task  found -->
+                        <h3 *ngIf="!loading && !httpError && !projectTasks" class="uk-text-center uk-margin-remove">
+                            There is no tasks assiciated with this project.</h3>
+
+                        <!-- Table  -->
+                        <div class="uk-overflow-auto" *ngIf="!loading && !httpError && projectTasks">
+                            <table class="uk-table uk-table-divider uk-text-nowrap table-hover">
+                                <thead>
+                                    <tr class="uk-text-center">
+                                        <th>ID</th>
+                                        <th>Task</th>
+                                        <th>State</th>
+                                        <th>HV</th>
+                                        <th>Start date</th>
+                                        <th>End date</th>
+                                        <th>Collaboraters</th>
+                                        <th>Competences</th>
+                                        <th>More</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    <tr class="uk-box-shadow-hover-medium fw-550" *ngFor="let task of projectTasks">
+                                        <td class="uk-text-middle">{{task.id}}</td>
+                                        <td class="uk-text-middle">
+                                            <a href="#details-{{task.id}}" uk-toggle>{{task.name}}</a>
+                                        </td>
+
+                                        <td class="uk-text-middle">
+                                            <span class="uk-label" [class.uk-label-success]="task.isComplete" [class.uk-label-primary]="!task.isComplete">
+                                                {{task.isComplete ? 'Completed' : 'In progress'}}
+                                            </span>
+                                        </td>
+
+                                        <td class="uk-text-middle">{{task.hourlyVolume}} hours</td>
+                                        <td class="uk-text-middle">{{task.startDate | date}}</td>
+                                        <td class="uk-text-middle">{{task.endDate | date}}</td>
+
+                                        <!-- Collaboraters -->
+                                        <td class="uk-text-middle">
+                                            <img *ngFor="let collaborater of task.collaboraters | slice:0:2" src="{{collaborater.collaborater.photoURL}}" class="uk-border-circle uk-text-middle uk-margin-small-right" width="40" height="40" [attr.uk-tooltip]="collaborater.collaborater.firstName +' '+collaborater.collaborater.lastName">
+
+                                            <a *ngIf="task.collaboraters.length >= 3" class="uk-icon-button uk-margin-small-right text-sencondary">+{{task.collaboraters.length -2}}</a>
+
+                                            <button *ngIf="task.collaboraters.length === 0" class="uk-button uk-button-default uk-border-pill" type="button" style="padding: 0 15px; text-transform: capitalize;">no one</button>
+                                        </td>
+
+                                        <!-- Competences -->
+                                        <td class="uk-text-middle">
+                                            <button class="uk-button uk-button-default uk-border-pill" type="button" style="padding: 0 15px; text-transform: capitalize;">{{task.competences.length}}
+                                                competences</button>
+
+                                            <div *ngIf="task.competences.length != 0" uk-dropdown="mode: click" style="padding: 5px 15px; border-radius: 10px;">
+                                                <ul *ngFor="let competence of task.competences" class="uk-nav uk-dropdown-nav">
+                                                    <li class="uk-text-center">
+                                                        {{competence.name}}
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </td>
+
+                                        <!-- More  -->
+                                        <td class="uk-text-middle">
+                                            <a class="uk-icon-button text-primary" uk-icon="pencil"></a>
+                                            <a class="uk-icon-button uk-margin-small-right text-danger" uk-icon="trash"></a>
+                                        </td>
+
+                                        <!-- Task details modal -->
+                                        <div id="details-{{task.id}}" class="uk-flex-top" uk-modal>
+                                            <div class="uk-modal-dialog uk-margin-auto-vertical">
+                                                <button class="uk-modal-close-default" type="button" uk-close></button>
+
+                                                <!-- Modal Header  -->
+                                                <div class="uk-modal-header">
+                                                    <h3 class="uk-modal-title">
+                                                        <span class="uk-margin-right">{{task.name}}</span>
+
+                                                        <span class="uk-label uk-text-bold uk-margin-small-right" [class.uk-label-success]="task.isComplete" [class.uk-label-primary]="!task.isComplete">
+                                                            {{task.isComplete ? 'Completed' : 'In progress'}}
+                                                        </span>
+
+                                                        <span class="uk-label uk-label-default uk-text-bold">
+                                                            {{task.hourlyVolume}} Hours
+                                                        </span>
+                                                    </h3>
+                                                </div>
+
+                                                <!-- Modal Body  -->
+                                                <div class="uk-modal-body">
+                                                    <h5 class="uk-text-meta uk-flex uk-flex-middle">
+                                                        <span class="material-icons uk-margin-small-right">schedule</span>
+                                                        <span class="uk-margin-small-right">Start :
+                                                            {{task.startDate | date}}</span>
+                                                        <span class="material-icons-outlined uk-margin-small-right">forward</span>
+                                                        <span>End : {{task.endDate | date}}</span>
+                                                    </h5>
+
+                                                    <p>{{task.description}}</p>
+
+                                                    <hr class="uk-divider-icon" style="margin: 10px;">
+
+                                                    <!-- Collaboraters -->
+                                                    <div>
+                                                        <h5 class="">Collaboraters</h5>
+                                                        <div class="uk-margin-small">
+                                                            <span class="collaborater uk-margin-small-right fw-550" *ngFor="let collaborater of task.collaboraters">
+                                                                <img src="{{collaborater.collaborater.photoURL}}"
+                                                                    class="uk-border-circle uk-margin-small-right"
+                                                                    width="30" height="30" style="margin-bottom: 7px;">
+                                                                {{collaborater.collaborater.firstName}}
+                                                                {{collaborater.collaborater.lastName}}
+                                                                | {{collaborater.workingHours}} Hours
+                                                            </span>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Competences -->
+                                                    <div class="uk-margin-top uk-margin-bottom">
+                                                        <h5 class="">Competences</h5>
+                                                        <div class="uk-margin-small">
+                                                            <span class="collaborater uk-margin-small-right fw-550" *ngFor="let competence of task.competences">
+                                                                {{competence.name}}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Modal Footer  -->
+                                                <div class="uk-modal-footer uk-text-right" style="padding: 10px 30px;">
+                                                    <button class="uk-button uk-button-secondary uk-text-bold uk-border-pill uk-modal-close">close</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination -->
+                        <ul *ngIf="pageNumbers" class="uk-pagination uk-flex-center uk-flex-middle" style="margin-bottom: 0;" uk-margin>
+                            <li>
+                                <a (click)="selectPage(currentPage - 1)"><span
+                                        uk-pagination-previous></span>Previous</a>
+                            </li>
+                            <li *ngFor="let page of pageNumbers; index as i" [class.page-active]="i == currentPage">
+                                <a (click)="selectPage(i)">{{i+1}}</a>
+                            </li>
+                            <li>
+                                <a (click)="selectPage(currentPage + 1)">Next<span uk-pagination-next></span></a>
+                            </li>
+                            <li>
+                                <div class="rows-selector">
+                                    <div uk-form-custom="target: true">
+                                        <input (keyup.enter)="setRowsPerPage(rows)" class="uk-input uk-form-width-small border-radius-left" type="number" min="1" placeholder="Rows per page" #rows>
+                                    </div>
+                                    <button (click)="setRowsPerPage(rows)" class="uk-button uk-button-secondary uk-text-bold border-radius-right" style="padding: 0 15px;">show</button>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Add Task  -->
+                <div id="offcanvas-flip" uk-offcanvas="flip: true; overlay: true">
+                    <div class="uk-offcanvas-bar uk-flex uk-flex-column">
+                        <button class="uk-offcanvas-close" type="button" uk-close></button>
+
+                        <form (ngSubmit)="onAddTask(addTaskform)" #addTaskform="ngForm" class="uk-card uk-card-default uk-margin-auto-vertical border-radius-20 uk-form-stacked fw-550">
+                            <fieldset class="uk-fieldset">
+                                <!-- Step 1  -->
+                                <div class="toggle">
+                                    <h2 class="uk-text-center">Task Details</h2>
+
+                                    <!-- Task name field  -->
+                                    <div class="uk-margin">
+                                        <label class="uk-form-label uk-text-bold" for="form-stacked-text">
+                                            Task Name
+                                            <span class="uk-text-danger">*</span>
+                                        </label>
+                                        <div class="uk-form-controls">
+                                            <input class="uk-input border-radius-10" [class.uk-form-danger]="taskName.invalid && taskName.touched" type="text" placeholder="Task name" name="name" [(ngModel)]="currentTask.name" #taskName="ngModel" required minlength="3">
+                                        </div>
+
+                                        <!-- Validation errors -->
+                                        <div *ngIf="taskName.errors && taskName.touched">
+                                            <p [hidden]="!taskName.errors?.required" class="uk-text-danger" style="margin-top: 6px;font-size: .9rem;">Task name required.</p>
+                                            <p [hidden]="!taskName.errors?.minlength" class="uk-text-danger" style="margin-top: 6px;font-size: .9rem;">Must be more at least 3 caracters.
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Dates field  -->
+                                    <div class="uk-margin">
+                                        <div class="uk-form-controls" uk-grid>
+                                            <!-- Start Date  -->
+                                            <div class="uk-width-1-2@s">
+                                                <label class="uk-form-label uk-text-bold" for="form-stacked-text">
+                                                    Start date
+                                                    <span class="uk-text-danger">*</span>
+                                                </label>
+
+                                                <div class="uk-inline">
+                                                    <span class="uk-form-icon" uk-icon="icon: calendar"></span>
+                                                    <input class="uk-input border-radius-10 uk-width-1-1" [class.uk-form-danger]="startDate.invalid && startDate.touched" name="startDate" type="date" [(ngModel)]="currentTask.startDate" #startDate="ngModel" required>
+                                                </div>
+
+                                                <!-- Validation errors -->
+                                                <div *ngIf="startDate.errors && startDate.touched">
+                                                    <p [hidden]="!startDate.errors?.required" class="uk-text-danger" style="margin-top: 6px;font-size: .9rem;">Start Date required.
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <!-- End Date  -->
+                                            <div class="uk-width-1-2@s">
+                                                <label class="uk-form-label uk-text-bold" for="form-stacked-text">
+                                                    End date
+                                                    <span class="uk-text-danger">*</span>
+                                                </label>
+
+                                                <div class="uk-inline">
+                                                    <span class="uk-form-icon" uk-icon="icon: calendar"></span>
+                                                    <input class="uk-input border-radius-10 uk-width-1-1" [class.uk-form-danger]="endDate.invalid && endDate.touched" name="endDate" type="date" [(ngModel)]="currentTask.endDate" #endDate="ngModel" required>
+                                                </div>
+
+                                                <!-- Validation errors -->
+                                                <div *ngIf="endDate.errors && endDate.touched" style="margin-bottom: 0 !important;">
+                                                    <p [hidden]="!endDate.errors?.required" class="uk-text-danger" style="margin: 6px 0 0 0; font-size: .9rem;">End Date required.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <!-- Hourly Volume field  -->
+                                    <div class="uk-margin" uk-grid>
+                                        <div class="uk-width-1-2@s">
+                                            <label class="uk-form-label uk-text-bold" for="form-stacked-text">
+                                                Hourly Volume
+                                                <span class="uk-text-danger">*</span>
+                                            </label>
+                                            <div class="uk-form-controls">
+                                                <input class="uk-input border-radius-10" [class.uk-form-danger]="hourlyVolume.invalid && hourlyVolume.touched" type="number" min="0" placeholder="100 hours" name="hourlyVolume" [(ngModel)]="currentTask.hourlyVolume" #hourlyVolume="ngModel" required>
+                                            </div>
+
+                                            <!-- Validation errors -->
+                                            <div *ngIf="hourlyVolume.errors?.required && hourlyVolume.touched">
+                                                <p class="uk-text-danger" style="margin-top: 6px;font-size: .9rem;">Hourly volume required.</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="uk-width-1-2@s">
+                                            <label class="uk-form-label uk-text-bold" for="form-stacked-text">
+                                                Estime Of Hours Per Day</label>
+
+                                            <div class="uk-inline">
+                                                <span class="uk-form-icon uk-form-icon-flip" style="margin-right: 16px">H/Day</span>
+                                                <input class="uk-input border-radius-10" type="text" readonly name="estime" [ngModel]="getcurrentTaskWHPerDay()">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Description  -->
+                                    <div class="uk-margin">
+                                        <label class="uk-form-label uk-text-bold" for="form-stacked-text">Task
+                                            Description</label>
+                                        <div class="uk-form-controls">
+                                            <textarea class="uk-textarea border-radius-10" rows="4" placeholder="Optional" name="description" [(ngModel)]="currentTask.description"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Step 2  -->
+                                <div hidden class="toggle">
+                                    <h2 class="uk-text-center">Collaboraters and Competences</h2>
+
+                                    <!-- Selected competences  -->
+                                    <div *ngIf="currentTask.competences.length > 0" class="uk-margin selected-competence">
+                                        <label class="uk-form-label uk-text-bold" for="form-stacked-text">
+                                            Selected competences
+                                        </label>
+
+                                        <div class="uk-card uk-card-body border-radius-10 uk-margin-small-top">
+                                            <button *ngFor="let competence of currentTask.competences" class="uk-button uk-button-default uk-border-pill uk-margin-small-right" type="button">
+                                                {{competence.name}}
+                                                <span (click)="deleteCompetence(competence)"
+                                                    uk-icon="icon: close"></span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Add Competences  -->
+                                    <div class="uk-margin">
+                                        <label class="uk-form-label uk-text-bold" for="form-stacked-text">
+                                            Chose competences
+                                        </label>
+
+                                        <div class="uk-inline">
+                                            <a (click)="clearCompetencesSearch(keyword)" class="uk-form-icon uk-form-icon-flip uk-margin-small-top" uk-icon="icon: close"></a>
+                                            <input (keyup)="searchCompetences(keyword.value, $event)" class="uk-input border-radius-top uk-margin-small-top" type="text" placeholder="Search for competence ..." #keyword>
+                                        </div>
+
+                                        <div *ngIf="searchedCompetences.length > 0" class="uk-card uk-card-default uk-card-body border-radius-bottom" style="padding: 5px 15px" tabindex="0" #div>
+                                            <ul *ngFor="let competence of searchedCompetences" class="uk-nav uk-dropdown-nav">
+                                                <li>
+                                                    <label>
+                                                        <input (click)="onCheckCompetence(competence)"
+                                                            class="uk-checkbox uk-margin-right" type="checkbox"
+                                                            [checked]="isCompetenceSelected(competence)">
+                                                        {{competence.name}}
+                                                    </label>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <!-- Selected collaboraters  -->
+                                    <div *ngIf="currentTask.collaboraters.length > 0" class="uk-margin selected-competence">
+                                        <label class="uk-form-label uk-text-bold" for="form-stacked-text">
+                                            Selected collaboraters
+                                        </label>
+
+                                        <div class="uk-card uk-card-body border-radius-10 uk-margin-small-top">
+                                            <button *ngFor="let collaboraterTask of currentTask.collaboraters" class="uk-button uk-button-default uk-border-pill uk-margin-small-right" type="button">
+                                                <img src="{{collaboraterTask.collaborater.photoURL}}" class="uk-border-circle uk-margin-small-right" width="30" height="30">
+                                                <span class="uk-text-middle">
+                                                    {{collaboraterTask.collaborater.firstName | titlecase}} {{collaboraterTask.collaborater.lastName | titlecase}} | {{collaboraterTask.workingHours}} H
+                                                    <span (click)="deleteCollaborater(collaboraterTask)"uk-icon="icon: close"></span>
+                                                </span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Add Collaboraters  -->
+                                    <div class="uk-margin">
+                                        <label class="uk-form-label uk-text-bold" for="form-stacked-text">
+                                            Chose collaboraters
+                                        </label>
+
+                                        <div class="uk-inline">
+                                            <a (click)="clearCollabsSearch(key)" class="uk-form-icon uk-form-icon-flip uk-margin-small-top" uk-icon="icon: close"></a>
+                                            <input (keyup)="searchCollaboraters(key.value, $event)" class="uk-input border-radius-top uk-margin-small-top" type="text" placeholder="Search for collaborater ..." #key>
+                                        </div>
+
+                                        <div *ngIf="searchedCollaboraters.length > 0" class="uk-card uk-card-default uk-card-body border-radius-bottom" style="padding: 5px 15px">
+                                            <ul *ngFor="let collaborater of searchedCollaboraters" class="uk-nav uk-dropdown-nav">
+                                                <li>
+                                                    <label>
+                                                        <input (click)="onCheckCollaborater(collaborater, workingHours, checkbox)" class="uk-checkbox uk-margin-right" type="checkbox" [checked]="isCollaboraterSelected(collaborater)" #checkbox>
+
+                                                        <img src="{{collaborater.photoURL}}" class="uk-border-circle uk-text-middle uk-margin-small-right" width="40" height="40">
+                                                        {{collaborater.firstName | titlecase}} {{collaborater.lastName | titlecase}}
+
+                                                        <span [class.border-danger]="getCollabWHPerDay(collaborater) > 8" class="uk-label uk-label-white uk-margin-small-left" uk-tooltip="All tasks estime">{{getCollabWHPerDay(collaborater)}} H/Day</span>
+
+                                                    </label>
+                                                    <div class="working-hours uk-float-right">
+                                                        Working Hours :
+
+                                                        <input *ngIf="getCollaboraterIndex(collaborater) !== -1" (blur)="checkWH(collaborater)" class="uk-margin-left uk-input border-radius-10" style="width: 80px;" type="number" min="1" placeholder="10 Hours" name="workingHours_{{collaborater.id}}" [(ngModel)]="currentTask.collaboraters[getCollaboraterIndex(collaborater)].workingHours">
+
+                                                        <input [hidden]="getCollaboraterIndex(collaborater) !== -1" class="uk-margin-left uk-input border-radius-10" style="width: 80px;" type="number" min="1" placeholder="10 Hours" #workingHours name="defaultWH_{{collaborater.id}}" [ngModel]="getDefaultWH()">
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <!-- Submit -->
+                                    <div class="uk-text-center">
+                                        <button *ngIf="!addProcessLoading" class="uk-button uk-button-primary uk-width-1-5 uk-text-bold uk-border-pill text-white" type="submit" style="padding: 0 20px;">
+                                            Add Task
+                                        </button>
+                                        <button *ngIf="addProcessLoading" class="uk-button uk-button-primary uk-width-1-5 uk-text-bold uk-border-pill text-white" style="padding: 0 20px;" uk-spinner="ratio: 0.9">
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Next  -->
+                                <div class="uk-text-right toggle">
+                                    <button (click)="clearSearch(key, keyword)" type="button" class="uk-button uk-button-primary uk-width-1-5 uk-text-bold uk-border-pill text-white" style="padding: 0 20px;" uk-toggle="target: .toggle">
+                                        next <span uk-icon="arrow-right"></span>
+                                    </button>
+                                </div>
+
+                                <!-- Back  -->
+                                <div hidden class="uk-text-left toggle">
+                                    <a id="back" class="uk-link-reset" uk-toggle="target: .toggle">
+                                        <span uk-icon="chevron-left"></span> back
+                                    </a>
+                                </div>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

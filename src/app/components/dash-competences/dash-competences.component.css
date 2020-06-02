@@ -1,13 +1,10 @@
+/** tasks && collaboraters dropdown ****/
 .uk-dropdown-nav li {
     background: whitesmoke;
     margin: 15px 0;
     padding: 10px;
     border-radius: 10px;
     font-size: .9rem;
-}
-
-.fw-550 {
-    font-weight: 550 !important;
 }
 
 .page-active>a {

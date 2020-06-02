@@ -4,30 +4,25 @@
     font-size: 16px;
 }
 
-.uk-active {
-    font-weight: 500;
-}
-
-#content>div {
-    padding-top: 30px !important;
-}
-
-.uk-tab>.uk-active>a {
+#tab-nav>.uk-active>a {
     border-color: #3C91E6 !important;
-    border-bottom-width: 2px !important;
+    border-bottom-width: 3px !important;
+    font-weight: 550;
 }
 
-.fw-600 {
-    font-weight: 700 !important;
+#content {
+    padding-top: 40px !important;
 }
 
-.fw-550 {
-    font-weight: 550 !important;
+
+/*** hover delete icon task table *****************/
+
+.delete:hover {
+    color: #F25F5C;
 }
 
-.fw-400 {
-    font-weight: 400;
-}
+
+/** due-date************************/
 
 .due-date {
     font-size: 12px !important;
@@ -38,23 +33,25 @@
     font-size: 20px !important;
 }
 
-.delete:hover {
-    color: #F25F5C;
-}
+
+/** Project img *********************/
 
 .img-container {
-    height: 75px !important;
+    height: 70px !important;
 }
 
 .projectImg {
-    height: 180px;
-    width: 180px;
+    height: 170px;
+    width: 170px;
     border-radius: 100%;
     position: relative;
     bottom: 120px;
     right: 0;
     left: 0;
 }
+
+
+/** projects background ***************/
 
 .bg_1 {
     background-color: #8EC5FC;

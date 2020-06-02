@@ -6,10 +6,6 @@
     font-size: .9rem;
 }
 
-.fw-550 {
-    font-weight: 550 !important;
-}
-
 .page-active>a {
     font-weight: 550 !important;
     color: #0D1B1E !important;

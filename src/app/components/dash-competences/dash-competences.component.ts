@@ -6,11 +6,11 @@ import Swal from 'sweetalert2';
 declare var UIkit: any;
 
 @Component({
-    selector: 'app-dash-competence',
-    templateUrl: './dash-competence.component.html',
-    styleUrls: ['./dash-competence.component.css']
+    selector: 'app-dash-competences',
+    templateUrl: './dash-competences.component.html',
+    styleUrls: ['./dash-competences.component.css']
 })
-export class DashCompetenceComponent implements OnInit {
+export class DashCompetencesComponent implements OnInit {
     loading: boolean = true;
     competences: Competence[];
     currentCompetence: Competence = { name: '' };

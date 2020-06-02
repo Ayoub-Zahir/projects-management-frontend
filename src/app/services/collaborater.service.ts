@@ -5,9 +5,9 @@ import { Observable } from 'rxjs';
 
 // Models
 import { Collaborater } from 'src/app/models/Collaborater';
+import { map } from 'rxjs/operators';
 
 const headers: HttpHeaders = new HttpHeaders({'Content-type':'application/json; charset=UTF-8'});
-
 
 @Injectable({
     providedIn: 'root'
@@ -40,5 +40,22 @@ export class CollaboraterService {
 
     delete(id: string): Observable<void>{
         return this.http.delete<void>(`${this.URL}/${id}`, { headers });
+    }
+
+    search(keyword: string): Observable<Collaborater[]>{
+        const params: HttpParams = new HttpParams().set('keyword', keyword);
+        
+        return this.http.get<Collaborater[]>(`${this.URL}/search`, { headers , params })
+            .pipe(map(collaboraters => collaboraters.map(collaborater => {
+                return {
+                    id: collaborater.id,
+                    firstName: collaborater.firstName,
+                    lastName: collaborater.lastName,
+                    email: collaborater.email,
+                    photoURL: collaborater.photoURL,
+                    competences: collaborater.competences,
+                    tasks: collaborater.tasks
+                };
+            })));
     }
 }

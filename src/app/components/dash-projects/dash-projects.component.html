@@ -26,7 +26,6 @@
 
             <!-- Error message && Loading -->
             <div *ngIf="error || httpError || loading" class="uk-card uk-card-default uk-card-hover uk-card-body border-radius-20">
-
                 <h3 *ngIf="error" class="uk-text-center">{{error}}</h3>
                 <h3 *ngIf="httpError" class="uk-text-center uk-margin-remove">{{httpError}}</h3>
 
@@ -48,7 +47,7 @@
                             </div>
 
                             <div class="uk-padding-remove uk-flex uk-flex-middle uk-flex-center">
-                                <button class="uk-button border-radius-10 due-date uk-flex uk-flex-middle fw-600" [class.uk-button-warning]="project.daysLeft > 3 && project.daysLeft <= 6" [class.uk-button-danger]="project.daysLeft <= 3">
+                                <button class="uk-button border-radius-10 due-date uk-flex uk-flex-middle uk-text-bold" [class.uk-button-warning]="project.daysLeft > 3 && project.daysLeft <= 6" [class.uk-button-danger]="project.daysLeft <= 3">
                                     <span class="material-icons uk-margin-small-right">schedule</span> {{project.daysLeft}} days left
                                 </button>
                             </div>

@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+
 // Models
 import { Competence } from 'src/app/models/Competence';
-import { identifierModuleUrl } from '@angular/compiler';
+
+// Rxjs
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 const headers: HttpHeaders = new HttpHeaders({'Content-type':'application/json; charset=UTF-8'});
-
 
 @Injectable({
     providedIn: 'root'

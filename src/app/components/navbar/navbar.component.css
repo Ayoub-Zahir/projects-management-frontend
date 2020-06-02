@@ -3,14 +3,6 @@
     width: 50px !important;
 }
 
-.uk-navbar-nav>li>a {
-    text-transform: none;
-}
-
-.cursor-default {
-    cursor: default;
-}
-
 .uk-badge {
     min-width: 10px !important;
     height: 10px !important;
@@ -21,4 +13,8 @@
 
 .pl {
     padding-left: 29px;
+}
+
+.navbar-secondary {
+    background-color: #0D1B1E !important;
 }

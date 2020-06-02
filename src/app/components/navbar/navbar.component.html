@@ -6,8 +6,11 @@
                 <img src="assets/img/logo.svg" alt="logo">
             </a>
         </li>
-        <li class="uk-hidden@l uk-margin-medium-left">
-            <a class="uk-icon-button" uk-icon="icon: chevron-right; ratio:2" uk-toggle="target: #mobile-side-bar"></a>
+        <li class="uk-hidden@xl uk-margin-medium-left">
+            <a class="uk-icon-button" uk-icon="icon: menu; ratio:1.5" uk-toggle="target: #mobile-side-bar"></a>
+        </li>
+        <li class="uk-visible@xl uk-margin-medium-left">
+            <a (click)="isChevronRight = !isChevronRight" class="uk-icon-button" [attr.uk-icon]="isChevronRight ? 'icon: chevron-right; ratio:1.5' : 'icon: chevron-left; ratio:1.5'" uk-toggle="target: #side-bar" style="padding: 5px;"></a>
         </li>
     </div>
 

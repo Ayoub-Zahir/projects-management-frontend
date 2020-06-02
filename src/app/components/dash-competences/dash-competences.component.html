@@ -57,12 +57,12 @@
 
                                 <!-- Tasks -->
                                 <td class="uk-text-middle">
-                                    <button class="uk-button uk-button-default fw-550 uk-border-pill" type="button">{{competence.tasks.length}} tasks</button>
+                                    <button class="uk-button uk-button-default uk-border-pill" type="button" style="padding: 0 15px; text-transform: capitalize;">{{competence.tasks.length}} tasks</button>
 
                                     <div *ngIf="competence.tasks.length != 0" uk-dropdown="mode: click" style="padding: 5px 15px; border-radius: 10px;">
                                         <ul *ngFor="let task of competence.tasks" class="uk-nav uk-dropdown-nav">
                                             <li class="uk-text-center">
-                                                ID {{task.id}} : {{task.name}}
+                                                {{task.name}}
                                             </li>
                                         </ul>
                                     </div>
@@ -71,9 +71,11 @@
 
                                 <!-- Collaboraters -->
                                 <td class="uk-text-middle">
-                                    <img *ngFor="let collaborater of competence.collaboraters" src="{{collaborater.photoURL}}" class="uk-border-circle uk-text-middle uk-margin-small-right" width="40" height="40" [attr.uk-tooltip]="collaborater.firstName +' '+collaborater.lastName">
+                                    <img *ngFor="let collaborater of competence.collaboraters | slice:0:2" src="{{collaborater.photoURL}}" class="uk-border-circle uk-text-middle uk-margin-small-right" width="40" height="40" [attr.uk-tooltip]="collaborater.firstName +' '+collaborater.lastName">
 
-                                    <button *ngIf="competence.collaboraters.length === 0" class="uk-button fw-550 uk-button-default uk-border-pill" type="button">no one</button>
+                                    <a *ngIf="competence.collaboraters.length >= 3" class="uk-icon-button uk-margin-small-right text-sencondary">+{{competence.collaboraters.length -2}}</a>
+
+                                    <button *ngIf="competence.collaboraters.length === 0" class="uk-button uk-button-default uk-border-pill" type="button" style="padding: 0 15px; text-transform: capitalize;">no one</button>
                                 </td>
 
                                 <!-- More  -->
@@ -87,7 +89,7 @@
                     </table>
 
                     <!-- Pagination -->
-                    <ul class="uk-pagination uk-flex-center uk-flex-middle" uk-margin>
+                    <ul *ngIf="pageNumbers" class="uk-pagination uk-flex-center uk-flex-middle" uk-margin>
                         <li>
                             <a (click)="selectPage(currentPage - 1)"><span uk-pagination-previous></span>Previous</a>
                         </li>
@@ -141,7 +143,8 @@
                                     <!-- Validation errors -->
                                     <div *ngIf="competenceName.errors && competenceName.touched">
                                         <p [hidden]="!competenceName.errors?.required" class="uk-text-danger" style="margin-top: 6px;font-size: .9rem;">Competence name required.</p>
-                                        <p [hidden]="!competenceName.errors?.minlength" class="uk-text-danger" style="margin-top: 6px;font-size: .9rem;">Must be more at least 3 caracters.</p>
+                                        <p [hidden]="!competenceName.errors?.minlength" class="uk-text-danger" style="margin-top: 6px;font-size: .9rem;">Must be more at least 3 caracters.
+                                        </p>
                                     </div>
                                 </div>
                             </fieldset>

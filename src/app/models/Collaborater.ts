@@ -1,5 +1,5 @@
 import { Competence } from './Competence';
-import { Task } from './Task';
+import { CollaboraterTask } from './CollaboraterTask';
 
 export interface Collaborater{
     id?: number,
@@ -8,5 +8,5 @@ export interface Collaborater{
     email: string,
     photoURL: string,
     competences?: Competence[],
-    tasks?: Task[]
+    tasks?: CollaboraterTask[]
 }
