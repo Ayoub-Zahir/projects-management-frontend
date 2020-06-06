@@ -37,7 +37,6 @@ export class ProjectService {
         return this.http.post<Project>(this.URL, project, { headers });
     }
 
-
     update(id: string, updatedProject: Project) {
         return this.http.put<Project>(`${this.URL}/${id}`, updatedProject, { headers });
     }

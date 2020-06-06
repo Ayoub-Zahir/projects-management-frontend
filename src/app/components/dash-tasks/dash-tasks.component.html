@@ -32,7 +32,7 @@
                     <div class="uk-clearfix uk-margin-small-bottom">
                         <h2 class="uk-float-left">Project Tasks</h2>
 
-                        <button class="uk-button uk-button-primary uk-float-right uk-text-bold uk-border-pill uk-flex uk-flex-middle" uk-toggle="target: #offcanvas-flip">
+                        <button (click)="resetState(addTaskform)" class="uk-button uk-button-primary uk-float-right uk-text-bold uk-border-pill uk-flex uk-flex-middle" uk-toggle="target: #offcanvas-flip">
                             <span class="material-icons uk-text-middle">add</span> Add Task
                         </button>
                     </div>
@@ -48,11 +48,11 @@
                         </h3>
 
                         <!-- No task  found -->
-                        <h3 *ngIf="!loading && !httpError && !projectTasks" class="uk-text-center uk-margin-remove">
+                        <h3 *ngIf="!loading && !httpError && projectTasks.length === 0" class="uk-text-center uk-margin-remove">
                             There is no tasks assiciated with this project.</h3>
 
                         <!-- Table  -->
-                        <div class="uk-overflow-auto" *ngIf="!loading && !httpError && projectTasks">
+                        <div class="uk-overflow-auto" *ngIf="!loading && !httpError && projectTasks.length > 0">
                             <table class="uk-table uk-table-divider uk-text-nowrap table-hover">
                                 <thead>
                                     <tr class="uk-text-center">
@@ -110,8 +110,8 @@
 
                                         <!-- More  -->
                                         <td class="uk-text-middle">
-                                            <a class="uk-icon-button text-primary" uk-icon="pencil"></a>
-                                            <a class="uk-icon-button uk-margin-small-right text-danger" uk-icon="trash"></a>
+                                            <a (click)="setEditState(task)" class="uk-icon-button text-primary" uk-icon="pencil"></a>
+                                            <a (click)="deleteTask(task.id)" class="uk-icon-button uk-margin-small-right text-danger" uk-icon="trash"></a>
                                         </td>
 
                                         <!-- Task details modal -->
@@ -186,7 +186,7 @@
                         </div>
 
                         <!-- Pagination -->
-                        <ul *ngIf="pageNumbers" class="uk-pagination uk-flex-center uk-flex-middle" style="margin-bottom: 0;" uk-margin>
+                        <ul *ngIf="pageNumbers && projectTasks.length > 0" class="uk-pagination uk-flex-center uk-flex-middle" style="margin-bottom: 0;" uk-margin>
                             <li>
                                 <a (click)="selectPage(currentPage - 1)"><span
                                         uk-pagination-previous></span>Previous</a>
@@ -214,7 +214,7 @@
                     <div class="uk-offcanvas-bar uk-flex uk-flex-column">
                         <button class="uk-offcanvas-close" type="button" uk-close></button>
 
-                        <form (ngSubmit)="onAddTask(addTaskform)" #addTaskform="ngForm" class="uk-card uk-card-default uk-margin-auto-vertical border-radius-20 uk-form-stacked fw-550">
+                        <form (ngSubmit)="onSubmitTask(addTaskform)" #addTaskform="ngForm" class="uk-card uk-card-default uk-margin-auto-vertical border-radius-20 uk-form-stacked fw-550">
                             <fieldset class="uk-fieldset">
                                 <!-- Step 1  -->
                                 <div class="toggle">
@@ -238,7 +238,7 @@
                                         </div>
                                     </div>
 
-                                    <!-- Dates field  -->
+                                    <!-- Dates field -->
                                     <div class="uk-margin">
                                         <div class="uk-form-controls" uk-grid>
                                             <!-- Start Date  -->
@@ -418,10 +418,10 @@
 
                                     <!-- Submit -->
                                     <div class="uk-text-center">
-                                        <button *ngIf="!addProcessLoading" class="uk-button uk-button-primary uk-width-1-5 uk-text-bold uk-border-pill text-white" type="submit" style="padding: 0 20px;">
-                                            Add Task
+                                        <button *ngIf="!addProcessLoading && !editProcessLoading" class="uk-button uk-button-primary uk-width-1-5 uk-text-bold uk-border-pill text-white" [class.uk-button-warning]="!addState" type="submit" style="padding: 0 20px;">
+                                            {{addState ? 'Add' : 'Update'}} Task
                                         </button>
-                                        <button *ngIf="addProcessLoading" class="uk-button uk-button-primary uk-width-1-5 uk-text-bold uk-border-pill text-white" style="padding: 0 20px;" uk-spinner="ratio: 0.9">
+                                        <button *ngIf="addProcessLoading || editProcessLoading" class="uk-button uk-button-primary uk-width-1-5 uk-text-bold uk-border-pill text-white" [class.uk-button-warning]="!addState" style="padding: 0 20px;" uk-spinner="ratio: 0.9">
                                         </button>
                                     </div>
                                 </div>

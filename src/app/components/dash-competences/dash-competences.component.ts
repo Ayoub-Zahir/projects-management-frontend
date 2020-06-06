@@ -170,7 +170,7 @@ export class DashCompetencesComponent implements OnInit {
                             Swal.fire({
                                 position: 'top-end',
                                 icon: 'success',
-                                titleText: `Competence has been successfully updated`,
+                                titleText: `Competence has been successfully deleted`,
                                 showConfirmButton: false,
                                 timer: 2000,
                             });

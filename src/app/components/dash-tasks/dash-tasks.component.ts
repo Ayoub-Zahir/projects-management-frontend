@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
-import { forkJoin } from 'rxjs';
 
 // Models
 import { Task } from 'src/app/models/Task';
@@ -13,10 +12,11 @@ import { ProjectService } from 'src/app/services/project.service';
 import { CompetenceService } from 'src/app/services/competence.service';
 import { CollaboraterService } from 'src/app/services/collaborater.service';
 import { TaskService } from 'src/app/services/task.service';
-import { CollaboraterTaskService } from 'src/app/services/collaborater-task.service';
 
 // Alert
 import Swal from 'sweetalert2';
+
+declare var UIkit: any;
 
 @Component({
     selector: 'app-dash-tasks',
@@ -27,10 +27,11 @@ export class DashTasksComponent implements OnInit {
     // Loading
     loading: boolean = true;
     addProcessLoading: boolean = false;
+    editProcessLoading: boolean = false;
 
     // Data
     projectId: string;
-    projectTasks: Task[];
+    projectTasks: Task[] = [];
     currentTask: Task = {
         name: '',
         hourlyVolume: null,
@@ -47,8 +48,8 @@ export class DashTasksComponent implements OnInit {
     searchedCompetences: Competence[] = [];
     searchedCollaboraters: Collaborater[] = [];
 
-    // Errors
-    httpError: string;
+    // State management
+    addState: boolean = true;
 
     // Pagination
     totalCollaboraters: number;
@@ -56,11 +57,13 @@ export class DashTasksComponent implements OnInit {
     currentPage: number = 0;
     rowsNumber: number = 3;
 
+    // Errors
+    httpError: string;
+
     constructor(
         private projectService: ProjectService,
         private competenceService: CompetenceService,
         private collaboraterService: CollaboraterService,
-        private collaboraterTaskService: CollaboraterTaskService,
         private taskService: TaskService,
         private activeRoute: ActivatedRoute
     ) { }
@@ -111,9 +114,45 @@ export class DashTasksComponent implements OnInit {
         }, 200)
     }
 
-    // Add
-    onAddTask(formVar): void {
-        if (!formVar.valid) {
+    // State Managemet --------------
+    setEditState(task: Task) {
+        this.currentTask = task;
+        this.addState = false;
+        UIkit.offcanvas('#offcanvas-flip').show()
+
+        // Check if in second part of the form
+        if (document.getElementById("back").offsetParent !== null)
+            document.getElementById("back").click();
+    }
+
+    resetState(formVar) {
+        this.addState = true;
+        // Reset form
+        this.currentTask = {
+            name: '',
+            hourlyVolume: null,
+            isComplete: false,
+            startDate: new Date().toLocaleDateString('en-CA'),
+            endDate: null,
+            description: '',
+            project: { id: null },
+            collaboraters: [],
+            competences: []
+        }
+        formVar.form.markAsUntouched();
+
+        // Clear search
+        this.searchedCompetences = [];
+        this.searchedCollaboraters = [];
+
+        // Check if in second part of the form
+        if (document.getElementById("back").offsetParent !== null)
+            document.getElementById("back").click();
+    }
+
+    // Submit
+    onSubmitTask(formVar): void {
+        if (formVar.valid) {
             const totalCollabWh = this.currentTask.collaboraters.reduce((total, collab) => total + collab.workingHours, 0);
 
             // Check if Total working time is equal to the HV of the task
@@ -121,58 +160,10 @@ export class DashTasksComponent implements OnInit {
 
                 // Check if some collaboraters exceed 8 hours a day
                 if (this.checkCollabsWHPerDay()) {
-                    this.addProcessLoading = true;
-                    this.currentTask.project.id = parseInt(this.projectId);
-
-                    // Add task details && competences
-                    this.taskService.add(this.currentTask).subscribe(
-                        (task) => {
-                            if (this.currentTask.collaboraters.length > 0) {
-                                // Add Task collaboraters
-                                let collaboraterTaskObs = [];
-
-                                this.currentTask.collaboraters.forEach(collaboraterTask => {
-                                    collaboraterTaskObs.push(
-                                        this.collaboraterTaskService.add({
-                                            id: {
-                                                collaboraterId: collaboraterTask.collaborater.id,
-                                                taskId: task.id
-                                            },
-                                            workingHours: collaboraterTask.workingHours,
-                                            collaborater: collaboraterTask.collaborater
-                                        })
-                                    );
-                                });
-
-                                forkJoin(collaboraterTaskObs).subscribe(
-                                    () => this.taskSuccessAdd(formVar),
-                                    err => console.log(err.message)
-                                );
-                            } else {
-                                this.taskSuccessAdd(formVar);
-                            }
-                        },
-                        (error: HttpErrorResponse) => {
-                            this.addProcessLoading = false;
-
-                            if (error.status === 0)
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Please make sure that the backend is working properly...',
-                                    showCloseButton: true,
-                                    confirmButtonText: 'Ok',
-                                    focusConfirm: false,
-                                });
-                            else
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: error.error.message,
-                                    showCloseButton: true,
-                                    confirmButtonText: 'Ok',
-                                    focusConfirm: false,
-                                });
-                        }
-                    );
+                    if (this.addState)
+                        this.addTask(formVar);
+                    else
+                        this.editTask(formVar);
                 }
                 else {
                     Swal.fire({
@@ -227,7 +218,172 @@ export class DashTasksComponent implements OnInit {
         }
     }
 
-    // Task competences selection
+    // CRUD
+    addTask(formVar) {
+        this.addProcessLoading = true;
+        this.currentTask.project.id = parseInt(this.projectId);
+
+        // Delete competences and tasks properties from taskcollaboraters
+        this.currentTask.collaboraters.forEach(taskCollab => {
+            delete taskCollab.collaborater.competences;
+            delete taskCollab.collaborater.tasks;
+        });
+
+        // Post Request
+        setTimeout(() => {
+            this.taskService.add(this.currentTask).subscribe(
+                () => {
+                    this.addProcessLoading = false;
+
+                    // Alert Success
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        titleText: `Task has been successfully added`,
+                        showConfirmButton: false,
+                        timer: 2000,
+                    })
+                        .then(() => {
+                            this.resetState(formVar);
+
+                            // Show the last page that contains the new competence
+                            if (this.projectTasks.length === 0) {
+                                // Refresh Ui
+                                this.loading = true;
+                                setTimeout(() => {
+                                    this.ngOnInit();
+                                }, 200)
+                            }
+                            else
+                                this.selectPage(this.pageNumbers.length - 1);
+
+                        });
+                },
+                (error) => {
+                    this.addProcessLoading = false;
+                    if (error.status === 0)
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Please make sure that the backend is working properly...',
+                            showCloseButton: true,
+                            confirmButtonText: 'Ok',
+                            focusConfirm: false,
+                        });
+                    else
+                        Swal.fire({
+                            icon: 'error',
+                            title: error.message,
+                            showCloseButton: true,
+                            confirmButtonText: 'Ok',
+                            focusConfirm: false,
+                        });
+                }
+            );
+        }, 800);
+    }
+
+    editTask(formVar) {
+        this.editProcessLoading = true;
+
+        // Delete competences and tasks properties from taskcollaboraters
+        this.currentTask.collaboraters.forEach(taskCollab => {
+            delete taskCollab.collaborater.competences;
+            delete taskCollab.collaborater.tasks;
+        });
+
+        // Put Request
+        setTimeout(() => {
+            this.taskService.update(this.currentTask).subscribe(
+                () => {
+                    this.editProcessLoading = false;
+
+                    // Alert Success
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        titleText: `Task has been successfully updated`,
+                        showConfirmButton: false,
+                        timer: 2000,
+                    })
+                        .then(() => {
+                            this.resetState(formVar);
+                            this.selectPage(this.currentPage);
+                        });            
+                },
+                (error) => {
+                    this.addProcessLoading = false;
+                    if (error.status === 0)
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Please make sure that the backend is working properly...',
+                            showCloseButton: true,
+                            confirmButtonText: 'Ok',
+                            focusConfirm: false,
+                        });
+                    else
+                        Swal.fire({
+                            icon: 'error',
+                            title: error.message,
+                            showCloseButton: true,
+                            confirmButtonText: 'Ok',
+                            focusConfirm: false,
+                        });
+                }
+            );
+        }, 800);
+    }
+
+    deleteTask(taskId: string) {
+        Swal.fire({
+            title: 'Are you sure you want to detete this task?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#F25F5C',
+            cancelButtonColor: '#3C91E6',
+            confirmButtonText: 'Yes, delete it!',
+        })
+            .then(result => {
+                if (result.value) {
+                    this.taskService.delete(taskId).subscribe(
+                        () => {
+                            // Case only one element on the page
+                            if (this.projectTasks.length === 1)
+                                this.selectPage(this.currentPage - 1);
+
+                            this.selectPage(this.currentPage);
+
+                            Swal.fire({
+                                position: 'top-end',
+                                icon: 'success',
+                                titleText: `Task has been successfully deleted`,
+                                showConfirmButton: false,
+                                timer: 2000,
+                            });
+                        },
+                        (error: HttpErrorResponse) => {
+                            if (error.status === 0)
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Please make sure that the backend is working properly...',
+                                    showCloseButton: true,
+                                    confirmButtonText: 'Ok',
+                                    focusConfirm: false,
+                                });
+                            else
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: error.error.message,
+                                    showCloseButton: true,
+                                    confirmButtonText: 'Ok',
+                                    focusConfirm: false,
+                                });
+                        }
+                    );
+                }
+            })
+    }
+
+    // Competences selection
     searchCompetences(keyword, event): void {
         // Clear div
         if (event.key === 'Backspace') {
@@ -296,7 +452,7 @@ export class DashTasksComponent implements OnInit {
         });
     }
 
-    // Task collaboraters selection
+    // Collaboraters selection
     searchCollaboraters(keyword, event): void {
         // Clear div
         if (event.key === 'Backspace') {
@@ -341,7 +497,6 @@ export class DashTasksComponent implements OnInit {
             if (workingHours.value > 0) {
                 // Add if Collaborater qualified
                 if (this.isCollaboraterQualified(collaborater)) {
-
                     // Check for collaborater charge per day <= 8
                     const currentTaskWHPerDay = Math.round(workingHours.value / this.getTaskDuration(this.currentTask));
                     const totalWHPerDay = currentTaskWHPerDay + this.getCollabWHPerDay(collaborater);
@@ -437,8 +592,6 @@ export class DashTasksComponent implements OnInit {
         const collabIndex: number = this.getCollaboraterIndex(collaborater);
         const collabVHT: number = this.currentTask.collaboraters[collabIndex].workingHours;
 
-        console.log(maxBound, minBound, MARGIN_PERCENTAGE);
-
         if (collabVHT > maxBound && taskCollabs > 1) {
             // console.log('maxBound');
             Swal.fire({
@@ -502,45 +655,6 @@ export class DashTasksComponent implements OnInit {
         this.searchedCollaboraters = [];
     }
 
-    taskSuccessAdd(formVar): void {
-        this.addProcessLoading = false;
-
-        // Alert Success
-        Swal.fire({
-            position: 'top-end',
-            icon: 'success',
-            titleText: `Task has been successfully added`,
-            showConfirmButton: false,
-            timer: 2000,
-        })
-            .then(() => {
-                // Reset form
-                this.currentTask = {
-                    name: '',
-                    hourlyVolume: null,
-                    isComplete: false,
-                    startDate: new Date().toLocaleDateString('en-CA'),
-                    endDate: null,
-                    description: '',
-                    project: { id: null },
-                    collaboraters: [],
-                    competences: []
-                }
-                formVar.form.markAsUntouched();
-
-                // Clear search
-                this.searchedCompetences = [];
-                this.searchedCollaboraters = [];
-
-                // click on back button
-                document.getElementById("back").click();
-
-                // Show the last page that contains the new competence
-                this.selectPage(this.pageNumbers.length - 1);
-            });
-
-    }
-
     getDefaultWH(): number {
         const taskCollabslength = this.currentTask.collaboraters.length;
         const taskVH = this.currentTask.hourlyVolume;
@@ -560,36 +674,39 @@ export class DashTasksComponent implements OnInit {
     }
 
     getCollabWHPerDay(collaborater: Collaborater): number {
-        // Check if the current task in collaborater tasks 
-        const isCurrentTaskExist: boolean = collaborater.tasks.map(c => c.task).filter(t => t.id === this.currentTask.id).length === 1;
+        if (collaborater.tasks) {
+            // Check if the current task in collaborater tasks 
+            const isCurrentTaskExist: boolean = collaborater.tasks.map(c => c.task).filter(t => t.id === this.currentTask.id).length === 1;
 
-        // Push the current task in collaorater tasks if not existed already
-        if (this.getCollaboraterIndex(collaborater) !== -1) {
-            if (!isCurrentTaskExist) {
-                collaborater.tasks.push({
-                    task: this.currentTask,
-                    workingHours: this.currentTask.collaboraters[this.getCollaboraterIndex(collaborater)].workingHours
-                });
-            }
-            else {
-                // Update Collaboater WH in  collaborater.tasks array
-                const newCollabWH = this.currentTask.collaboraters[this.getCollaboraterIndex(collaborater)].workingHours;
-                const oldCollabWH = collaborater.tasks[collaborater.tasks.length - 1].workingHours;
+            // Push the current task in collaorater tasks if not existed already
+            if (this.getCollaboraterIndex(collaborater) !== -1) {
+                if (!isCurrentTaskExist) {
+                    collaborater.tasks.push({
+                        task: this.currentTask,
+                        workingHours: this.currentTask.collaboraters[this.getCollaboraterIndex(collaborater)].workingHours
+                    });
+                }
+                else {
+                    // Update Collaboater WH in  collaborater.tasks array
+                    const newCollabWH = this.currentTask.collaboraters[this.getCollaboraterIndex(collaborater)].workingHours;
+                    const oldCollabWH = collaborater.tasks[collaborater.tasks.length - 1].workingHours;
 
-                if (newCollabWH !== null && (newCollabWH !== oldCollabWH)) {
-                    collaborater.tasks[collaborater.tasks.length - 1].workingHours = newCollabWH;
+                    if (newCollabWH !== null && (newCollabWH !== oldCollabWH)) {
+                        collaborater.tasks[collaborater.tasks.length - 1].workingHours = newCollabWH;
+                    }
                 }
             }
+
+            // Pop the current task from collaborater tasks if the collaborater is no longer selected
+            if (!this.isCollaboraterSelected(collaborater) && isCurrentTaskExist) {
+                collaborater.tasks.pop();
+            }
+
+            const totalHoursPerDay = collaborater.tasks.reduce((total, collaboraterTask) => total + Math.round(collaboraterTask.workingHours / this.getTaskDuration(collaboraterTask.task)), 0);
+
+            return totalHoursPerDay;
         }
 
-        // Pop the current task from collaborater tasks if the collaborater is no longer selected
-        if (!this.isCollaboraterSelected(collaborater) && isCurrentTaskExist) {
-            collaborater.tasks.pop();
-        }
-
-        const totalHoursPerDay = collaborater.tasks.reduce((total, collaboraterTask) => total + Math.round(collaboraterTask.workingHours / this.getTaskDuration(collaboraterTask.task)), 0);
-
-        return totalHoursPerDay;
     }
 
     getTaskDuration(task: Task): number {

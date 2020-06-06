@@ -8,7 +8,13 @@ import { AppComponent } from './app.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 
-// Modules
+// Services
+import { ProjectService } from 'src/app/services/project.service';
+import { CompetenceService } from 'src/app/services/competence.service';
+import { CollaboraterService } from 'src/app/services/collaborater.service';
+import { TaskService } from 'src/app/services/task.service';
+
+// App Routing
 import { AppRoutingModule, routingComponents } from './app-routing.module';
 
 
@@ -25,7 +31,12 @@ import { AppRoutingModule, routingComponents } from './app-routing.module';
         HttpClientModule,
         AppRoutingModule
     ],
-    providers: [],
+    providers: [
+        ProjectService,
+        CompetenceService,
+        CollaboraterService,
+        TaskService
+    ],
     bootstrap: [AppComponent]
 })
 export class AppModule { }
