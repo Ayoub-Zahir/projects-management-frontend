@@ -211,3 +211,7 @@ td>a {
     border: 1.5px solid #F25F5C;
     color: #f0506e !important;
 }
+
+.toggleComplete {
+    border: 1.5px solid #dadada !important;
+}

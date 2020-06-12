@@ -3,7 +3,7 @@
         <app-navbar></app-navbar>
     </div>
 
-    <div class="uk-width-1-5 uk-visible@l" style="max-width: 240px !important;">
+    <div id="side-bar" class="uk-width-1-5 uk-visible@xl" style="max-width: 240px !important;">
         <app-sidebar></app-sidebar>
     </div>
 
@@ -31,7 +31,7 @@
                 <div class="uk-clearfix uk-margin-small-bottom">
                     <h2 class="uk-float-left">Project Details</h2>
 
-                    <button class="uk-button uk-button-secondary uk-float-right uk-text-bold uk-border-pill" routerLink="/projects/edit/{{currentProject?.id}}">
+                    <button *ngIf="currentUserAuh?.role === 'ROLE_ADMIN' || currentUserAuh?.role === 'ROLE_MANAGER'" class="uk-button uk-button-secondary uk-float-right uk-text-bold uk-border-pill" routerLink="/projects/edit/{{currentProject?.id}}">
                         <span class="uk-margin-small-right" uk-icon="pencil"></span> Edit Project
                     </button>
                 </div>

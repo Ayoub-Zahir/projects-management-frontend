@@ -3,7 +3,7 @@
         <app-navbar></app-navbar>
     </div>
 
-    <div class="uk-width-1-5 uk-visible@l" style="max-width: 240px !important;">
+    <div id="side-bar" class="uk-width-1-5 uk-visible@xl" style="max-width: 240px !important;">
         <app-sidebar></app-sidebar>
     </div>
 
@@ -19,7 +19,7 @@
             <div class="uk-clearfix uk-margin-small-bottom">
                 <h2 class="uk-float-left">Projects <span class="uk-text-muted">({{projects.length}})</span></h2>
 
-                <button class="uk-button uk-button-primary uk-float-right uk-text-bold uk-border-pill uk-flex uk-flex-middle" routerLink="/projects/add">
+                <button *ngIf="currentUserAuh?.role === 'ROLE_ADMIN' || currentUserAuh?.role === 'ROLE_MANAGER'" class="uk-button uk-button-primary uk-float-right uk-text-bold uk-border-pill uk-flex uk-flex-middle" routerLink="/projects/add">
                     <span class="material-icons uk-text-middle">add</span> Add Project
                 </button>
             </div>
@@ -87,7 +87,7 @@
             </div>
 
             <!-- Float Add button  -->
-            <div class="add-button uk-animation-scale-up" uk-tooltip="Add Project">
+            <div *ngIf="currentUserAuh?.role === 'ROLE_ADMIN' || currentUserAuh?.role === 'ROLE_MANAGER'" class="add-button uk-animation-scale-up" uk-tooltip="Add Project">
                 <a routerLink="/projects/add" class="uk-icon-button text-white bg-primary uk-box-shadow-xlarge" style="height: 50px; width: 50px;text-decoration: none">
                     <span class="material-icons uk-text-middle" style="font-size: 1.6rem;">add</span>
                 </a>

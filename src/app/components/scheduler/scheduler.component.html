@@ -1,0 +1,40 @@
+<div class="uk-grid-collapse uk-child-width-expand@s" uk-grid>
+    <div class="uk-width-1-1">
+        <app-navbar></app-navbar>
+    </div>
+
+    <div id="side-bar" class="uk-width-1-5 uk-visible@xl" style="max-width: 240px !important;">
+        <app-sidebar></app-sidebar>
+    </div>
+
+    <div id="mobile-side-bar" class="uk-animation-slide-left" uk-offcanvas>
+        <div class="uk-offcanvas-bar" style="width: 240px !important;">
+            <app-sidebar></app-sidebar>
+        </div>
+    </div>
+
+    <div class="uk-width-expand" style="min-height: calc(100vh - 70px);">
+        <div class="uk-container uk-section">
+            <!-- Header  -->
+            <div class="uk-margin-small-bottom">
+                <h2>Scheduler</h2>
+            </div>
+
+            <!-- Scheduler -->
+            <div class="uk-card uk-card-default uk-padding border-radius-20" style="padding: 25px;">
+                <!-- Loading  -->
+                <h3 *ngIf="loading" class="uk-text-center uk-margin-remove">
+                    <div uk-spinner="ratio: 1.5"></div>
+                </h3>
+
+                <ejs-schedule *ngIf="!loading" height="800" [currentView]="initView" [views]="setViews" [eventSettings]="scheduledTasks">
+                    <e-views>
+                        <e-view option='Day' startHour='09:00' endHour='19:00'></e-view>
+                        <e-view option='Week' startHour='09:00' endHour='19:00'></e-view>
+                        <e-view option='Month'></e-view>
+                    </e-views>
+                </ejs-schedule>
+            </div>
+        </div>
+    </div>
+</div>

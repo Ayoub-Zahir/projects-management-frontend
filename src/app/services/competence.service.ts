@@ -16,7 +16,7 @@ const headers: HttpHeaders = new HttpHeaders({'Content-type':'application/json; 
 })
 export class CompetenceService {
 
-    private URL: string = `${environment.apiURL}/competences`;
+    private URL: string = `${environment.apiURL}/manager/competences`;
 
     constructor(private http: HttpClient) { }
 
@@ -30,10 +30,6 @@ export class CompetenceService {
 
     add(competence: Competence): Observable<Competence>{
         return this.http.post<Competence>(this.URL, competence, { headers });
-    }
-
-    get(id: string): Observable<Competence>{
-        return this.http.get<Competence>(`${this.URL}/${id}`, { headers });
     }
 
     update(updatedCompetence: Competence): Observable<Competence>{

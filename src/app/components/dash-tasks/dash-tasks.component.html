@@ -32,7 +32,7 @@
                     <div class="uk-clearfix uk-margin-small-bottom">
                         <h2 class="uk-float-left">Project Tasks</h2>
 
-                        <button (click)="resetState(addTaskform)" class="uk-button uk-button-primary uk-float-right uk-text-bold uk-border-pill uk-flex uk-flex-middle" uk-toggle="target: #offcanvas-flip">
+                        <button *ngIf="currentUserAuh?.role === 'ROLE_ADMIN' || currentUserAuh?.role === 'ROLE_MANAGER'" (click)="resetState(addTaskform)" class="uk-button uk-button-primary uk-float-right uk-text-bold uk-border-pill uk-flex uk-flex-middle" uk-toggle="target: #offcanvas-flip">
                             <span class="material-icons uk-text-middle">add</span> Add Task
                         </button>
                     </div>
@@ -56,6 +56,7 @@
                             <table class="uk-table uk-table-divider uk-text-nowrap table-hover">
                                 <thead>
                                     <tr class="uk-text-center">
+                                        <th *ngIf="currentUserAuh?.role === 'ROLE_ADMIN' || currentUserAuh?.role === 'ROLE_MANAGER'"></th>
                                         <th>ID</th>
                                         <th>Task</th>
                                         <th>State</th>
@@ -64,12 +65,17 @@
                                         <th>End date</th>
                                         <th>Collaboraters</th>
                                         <th>Competences</th>
-                                        <th>More</th>
+                                        <th *ngIf="currentUserAuh?.role === 'ROLE_ADMIN' || currentUserAuh?.role === 'ROLE_MANAGER'">More</th>
                                     </tr>
                                 </thead>
 
                                 <tbody>
                                     <tr class="uk-box-shadow-hover-medium fw-550" *ngFor="let task of projectTasks">
+                                        <td *ngIf="currentUserAuh?.role === 'ROLE_ADMIN' || currentUserAuh?.role === 'ROLE_MANAGER'">
+                                            <a (click)="completeTaskToggle(task)" [hidden]="task.isComplete" class="toggleComplete uk-icon-button uk-margin-small-right text-success"></a>
+
+                                            <a (click)="completeTaskToggle(task)" [hidden]="!task.isComplete" class="toggleComplete uk-icon-button uk-margin-small-right text-success" uk-icon="icon: check; ratio: 1.2"></a>
+                                        </td>
                                         <td class="uk-text-middle">{{task.id}}</td>
                                         <td class="uk-text-middle">
                                             <a href="#details-{{task.id}}" uk-toggle>{{task.name}}</a>
@@ -109,7 +115,7 @@
                                         </td>
 
                                         <!-- More  -->
-                                        <td class="uk-text-middle">
+                                        <td *ngIf="currentUserAuh?.role === 'ROLE_ADMIN' || currentUserAuh?.role === 'ROLE_MANAGER'" class="uk-text-middle">
                                             <a (click)="setEditState(task)" class="uk-icon-button text-primary" uk-icon="pencil"></a>
                                             <a (click)="deleteTask(task.id)" class="uk-icon-button uk-margin-small-right text-danger" uk-icon="trash"></a>
                                         </td>

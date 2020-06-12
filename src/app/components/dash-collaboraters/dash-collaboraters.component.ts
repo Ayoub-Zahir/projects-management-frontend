@@ -2,14 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 
 // Models
-import { Collaborater } from 'src/app/models/Collaborater';
+import { User } from 'src/app/models/User';
 import { Competence } from 'src/app/models/Competence';
 
 // Services
-import { CollaboraterService } from 'src/app/services/collaborater.service';
+import { UserService } from 'src/app/services/user.service';
 import { CompetenceService } from 'src/app/services/competence.service';
 
 import Swal from 'sweetalert2';
+import { AuthService } from 'src/app/services/auth.service';
 declare var UIkit: any;
 
 @Component({
@@ -19,16 +20,20 @@ declare var UIkit: any;
 })
 export class DashCollaboratersComponent implements OnInit {
     // Data
-    collaboraters: Collaborater[];
-    currentCollaborater: Collaborater = {
+    collaboraters: User[];
+    currentCollaborater: User = {
         firstName: '',
         lastName: '',
         email: '',
+        password: '',
+        role: 'ROLE_COLLABORATER',
         photoURL: '',
+        active: true,
         competences: [],
         tasks: []
     };
     competences: Competence[] = [];
+    currentUserAuh: User;
 
     // State management
     loading: boolean = true;
@@ -44,17 +49,27 @@ export class DashCollaboratersComponent implements OnInit {
     httpError: string;
 
     constructor(
-        private collaboraterService: CollaboraterService,
-        private competenceService: CompetenceService
+        private userService: UserService,
+        private competenceService: CompetenceService,
+        private authService: AuthService
     ) { }
 
     ngOnInit(): void {
-        this.collaboraterService.getCollaboraters(this.currentPage, this.rowsNumber).subscribe(
+
+        // Get Auth user
+        this.authService.getCurrentAuthUser().subscribe(user => {
+            this.currentUserAuh = user;
+        })
+
+        // Get collaboraters
+        this.userService.getCollaboraters(this.currentPage, this.rowsNumber).subscribe(
             collaboraterPage => {
-                this.totalCollaboraters = collaboraterPage.totalElements;
-                this.collaboraters = collaboraterPage.content;
-                this.pageNumbers = new Array(collaboraterPage.totalPages);
-                this.loading = false;
+                setTimeout(() => {
+                    this.totalCollaboraters = collaboraterPage.totalElements;
+                    this.collaboraters = collaboraterPage.content;
+                    this.pageNumbers = new Array(collaboraterPage.totalPages);
+                    this.loading = false;
+                }, 300)
             },
             (error: HttpErrorResponse) => {
                 this.loading = false;
@@ -62,7 +77,7 @@ export class DashCollaboratersComponent implements OnInit {
                 if (error.status === 0)
                     this.httpError = 'Please make sure that the backend is working properly...';
                 else
-                    this.httpError = error.error.message;
+                    this.httpError = error.message;
             }
         );
     }
@@ -74,9 +89,7 @@ export class DashCollaboratersComponent implements OnInit {
 
             // Refresh Ui
             this.loading = true;
-            setTimeout(() => {
-                this.ngOnInit();
-            }, 200)
+            this.ngOnInit();
         }
     }
 
@@ -86,9 +99,7 @@ export class DashCollaboratersComponent implements OnInit {
 
         // Refresh Ui
         this.loading = true;
-        setTimeout(() => {
-            this.ngOnInit();
-        }, 200)
+        this.ngOnInit();
     }
 
     // CRUD Operations ---------------
@@ -106,11 +117,11 @@ export class DashCollaboratersComponent implements OnInit {
     addCollaborater(formVar) {
         // Set Default img
         if(!this.currentCollaborater.photoURL){
-            this.currentCollaborater.photoURL = 'assets/img/user2.svg';
+            this.currentCollaborater.photoURL = 'assets/img/collaborater.svg';
             formVar.form.markAsUntouched();
         }
 
-        this.collaboraterService.add(this.currentCollaborater).subscribe(
+        this.userService.add(this.currentCollaborater).subscribe(
             (collaborater) => {
                 // Show the last page that contains the new competence
                 this.selectPage(this.pageNumbers.length - 1);
@@ -124,7 +135,8 @@ export class DashCollaboratersComponent implements OnInit {
                     timer: 1500,
                 });
             },
-            (error: HttpErrorResponse) => {
+            (error: HttpErrorResponse) => {      
+                console.error(error.message);          
                 if (error.status === 0)
                     Swal.fire({
                         icon: 'error',
@@ -133,20 +145,15 @@ export class DashCollaboratersComponent implements OnInit {
                         confirmButtonText: 'Ok',
                         focusConfirm: false,
                     });
-                else
-                    Swal.fire({
-                        icon: 'error',
-                        title: error.error.message,
-                        showCloseButton: true,
-                        confirmButtonText: 'Ok',
-                        focusConfirm: false,
-                    });
+                else if (error.error.message.includes("Email already exist")) {
+                    formVar.controls.email.setErrors({ 'emailExist': true });
+                }
             }
         );
     }
 
     editCollaborater(formVar) {
-        this.collaboraterService.update(this.currentCollaborater).subscribe(
+        this.userService.update(this.currentCollaborater).subscribe(
             () => {
                 // Show the last page that contains the new competence
                 this.selectPage(this.currentPage)
@@ -161,7 +168,9 @@ export class DashCollaboratersComponent implements OnInit {
                 });
             },
             (error: HttpErrorResponse) => {
-                if (error.status === 0)
+                console.error(error.message);          
+
+                if (error.status === 0){
                     Swal.fire({
                         icon: 'error',
                         title: 'Please make sure that the backend is working properly...',
@@ -169,14 +178,10 @@ export class DashCollaboratersComponent implements OnInit {
                         confirmButtonText: 'Ok',
                         focusConfirm: false,
                     });
-                else
-                    Swal.fire({
-                        icon: 'error',
-                        title: error.error.message,
-                        showCloseButton: true,
-                        confirmButtonText: 'Ok',
-                        focusConfirm: false,
-                    });
+                }
+                else if(error.error.message.includes("Email already exist")){
+                    formVar.controls.email.setErrors({ 'emailExist': true });
+                }
             }
         );
     }
@@ -192,7 +197,7 @@ export class DashCollaboratersComponent implements OnInit {
         })
             .then(result => {
                 if (result.value) {
-                    this.collaboraterService.delete(id).subscribe(
+                    this.userService.delete(id).subscribe(
                         () => {
                             // Case only one element on the page
                             if (this.collaboraters.length === 1)
@@ -209,7 +214,9 @@ export class DashCollaboratersComponent implements OnInit {
                             });
                         },
                         (error: HttpErrorResponse) => {
-                            if (error.status === 0)
+                            console.error(error.message);          
+
+                            if (error.status === 0){
                                 Swal.fire({
                                     icon: 'error',
                                     title: 'Please make sure that the backend is working properly...',
@@ -217,14 +224,7 @@ export class DashCollaboratersComponent implements OnInit {
                                     confirmButtonText: 'Ok',
                                     focusConfirm: false,
                                 });
-                            else
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: error.error.message,
-                                    showCloseButton: true,
-                                    confirmButtonText: 'Ok',
-                                    focusConfirm: false,
-                                });
+                            }
                         }
                     );
                 }
@@ -245,6 +245,8 @@ export class DashCollaboratersComponent implements OnInit {
             firstName: '',
             lastName: '',
             email: '',
+            active: true,
+            role: 'ROLE_COLLABORATER',
             photoURL: '',
             competences: []
         };
@@ -265,7 +267,9 @@ export class DashCollaboratersComponent implements OnInit {
                     this.competences = competences;
                 },
                 (error: HttpErrorResponse) => {
-                    if (error.status === 0)
+                    console.error(error.error.message);           
+                    
+                    if (error.status === 0){
                         Swal.fire({
                             icon: 'error',
                             title: 'Please make sure that the backend is working properly...',
@@ -273,14 +277,8 @@ export class DashCollaboratersComponent implements OnInit {
                             confirmButtonText: 'Ok',
                             focusConfirm: false,
                         });
-                    else
-                        Swal.fire({
-                            icon: 'error',
-                            title: error.error.message,
-                            showCloseButton: true,
-                            confirmButtonText: 'Ok',
-                            focusConfirm: false,
-                        });
+                    }
+                    
                 }
             )
         }

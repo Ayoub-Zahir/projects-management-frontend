@@ -1,5 +1,5 @@
-import { Collaborater } from './Collaborater';
 import { Task } from './Task';
+import { User } from './User';
 
 export interface CollaboraterTask{
     id?: {
@@ -7,6 +7,6 @@ export interface CollaboraterTask{
         taskId: number
     },
     workingHours: number,
-    collaborater?: Collaborater,
+    collaborater?: User,
     task?: Task
 }

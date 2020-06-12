@@ -6,15 +6,15 @@
                 <img src="assets/img/logo.svg" alt="logo">
             </a>
         </li>
-        <li class="uk-hidden@xl uk-margin-medium-left">
+        <li *ngIf="currentUser" class="uk-hidden@xl uk-margin-medium-left">
             <a class="uk-icon-button" uk-icon="icon: menu; ratio:1.5" uk-toggle="target: #mobile-side-bar"></a>
         </li>
-        <li class="uk-visible@xl uk-margin-medium-left">
+        <li *ngIf="currentUser" class="uk-visible@xl uk-margin-medium-left">
             <a (click)="isChevronRight = !isChevronRight" class="uk-icon-button" [attr.uk-icon]="isChevronRight ? 'icon: chevron-right; ratio:1.5' : 'icon: chevron-left; ratio:1.5'" uk-toggle="target: #side-bar" style="padding: 5px;"></a>
         </li>
     </div>
 
-    <div class="uk-navbar-right uk-margin-large-right">
+    <div *ngIf="currentUser" class="uk-navbar-right uk-margin-large-right">
 
         <ul class="uk-navbar-nav">
 
@@ -34,15 +34,15 @@
 
             <li class="uk-active uk-flex uk-flex-middle">
                 <div class="uk-text-right">
-                    <span style="font-size: 19px; font-weight: 500;">Ayoub Zahir</span>
+                    <span style="font-size: 19px; font-weight: 500;">{{currentUser.firstName | titlecase}} {{currentUser.lastName | titlecase}}</span>
                     <br>
-                    <span class="uk-text-muted" style="font-size: 15px;">Admin</span>
+                    <span class="uk-text-muted" style="font-size: 15px;">{{currentUser.role}}</span>
                 </div>
 
             </li>
 
             <li class="uk-flex uk-flex-middle uk-margin-left ">
-                <img src="assets/img/admin.svg" alt="Img" class="uk-border-circle" width="55" height="55">
+                <img src="{{currentUser.photoURL}}" alt="Img" class="uk-border-circle" width="55" height="55">
             </li>
         </ul>
     </div>

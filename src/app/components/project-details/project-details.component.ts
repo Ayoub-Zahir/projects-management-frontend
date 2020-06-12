@@ -7,6 +7,8 @@ import { Project } from 'src/app/models/Project';
 
 // Services
 import { ProjectService } from 'src/app/services/project.service';
+import { AuthService } from 'src/app/services/auth.service';
+import { User } from 'src/app/models/User';
 
 @Component({
     selector: 'app-project-details',
@@ -16,14 +18,21 @@ import { ProjectService } from 'src/app/services/project.service';
 export class ProjectDetailsComponent implements OnInit {
     loading: boolean = true;
     currentProject: Project;
+    currentUserAuh: User;
     httpError: string;
 
     constructor(
         private projectService: ProjectService,
+        private authService: AuthService,
         private activeRoute: ActivatedRoute
     ) { }
 
     ngOnInit(): void {
+        // Get Auth user
+        this.authService.getCurrentAuthUser().subscribe(user => {
+            this.currentUserAuh = user;
+        });
+
         const projectId = this.activeRoute.snapshot.paramMap.get('id');
 
         this.projectService.get(projectId).subscribe(
@@ -35,8 +44,10 @@ export class ProjectDetailsComponent implements OnInit {
                 project.daysLeft = daysLeft;
                 project.completedTasks = completedTasks.length;
 
-                this.currentProject = project;
-                this.loading = false;
+                setTimeout(() => {
+                    this.currentProject = project;
+                    this.loading = false;
+                }, 300)
             },
             (error: HttpErrorResponse) => {
                 this.loading = false;

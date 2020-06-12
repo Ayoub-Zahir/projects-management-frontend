@@ -13,8 +13,13 @@
 
 .pl {
     padding-left: 29px;
+    list-style-type: none;
 }
 
 .navbar-secondary {
     background-color: #0D1B1E !important;
+}
+
+nav {
+    min-height: 70px;
 }

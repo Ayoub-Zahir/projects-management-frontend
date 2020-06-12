@@ -1,35 +1,67 @@
 import { Component, OnInit } from '@angular/core';
-import { Competence } from 'src/app/models/Competence';
-import { CompetenceService } from 'src/app/services/competence.service';
 import { HttpErrorResponse } from '@angular/common/http';
+
+// Models
+import { User } from 'src/app/models/User';
+
+// Services
+import { UserService } from 'src/app/services/user.service';
+
 import Swal from 'sweetalert2';
+import { AuthService } from 'src/app/services/auth.service';
 declare var UIkit: any;
 
 @Component({
-    selector: 'app-dash-competences',
-    templateUrl: './dash-competences.component.html',
-    styleUrls: ['./dash-competences.component.css']
+    selector: 'app-dash-managers',
+    templateUrl: './dash-managers.component.html',
+    styleUrls: ['./dash-managers.component.css']
 })
-export class DashCompetencesComponent implements OnInit {
+export class DashManagersComponent implements OnInit {
+    // Data
+    managers: User[];
+    currentManager: User = {
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: '',
+        role: 'ROLE_MANAGER',
+        photoURL: '',
+        active: true,
+        competences: [],
+    };
+    currentUserAuh: User;
+
+    // State management
     loading: boolean = true;
-    competences: Competence[];
-    currentCompetence: Competence = { name: '' };
     addState: boolean = true;
-    totalCompetences: number;
+
+    // Pagination
+    totalManagers: number;
     pageNumbers: number[];
     currentPage: number = 0;
     rowsNumber: number = 5;
+
+    // Errors
     httpError: string;
 
-    constructor(private competenceService: CompetenceService) { }
+    constructor(
+        private userService: UserService,
+        private authService: AuthService
+    ) { }
 
     ngOnInit(): void {
-        this.competenceService.getCompetences(this.currentPage, this.rowsNumber).subscribe(
-            competencePage => {
+        // Get Auth user
+        this.authService.getCurrentAuthUser().subscribe(user => {
+            this.currentUserAuh = user;
+        })
+
+        // Get managers
+        this.userService.getManagers(this.currentPage, this.rowsNumber).subscribe(
+            managerPage => {
                 setTimeout(() => {
-                    this.totalCompetences = competencePage.totalElements;
-                    this.competences = competencePage.content;
-                    this.pageNumbers = new Array(competencePage.totalPages);
+                    this.totalManagers = managerPage.totalElements;
+                    this.managers = managerPage.content;
+                    this.pageNumbers = new Array(managerPage.totalPages);
                     this.loading = false;
                 }, 300)
             },
@@ -44,6 +76,7 @@ export class DashCompetencesComponent implements OnInit {
         );
     }
 
+    // Pagination ------------------
     selectPage(pageNumber) {
         if (pageNumber >= 0 && pageNumber < this.pageNumbers.length) {
             this.currentPage = pageNumber;
@@ -63,36 +96,42 @@ export class DashCompetencesComponent implements OnInit {
         this.ngOnInit();
     }
 
-    onSubmitCompetence(formVar) {
+    // CRUD Operations ---------------
+    onSubmitManager(formVar) {
         if (formVar.valid) {
             if (this.addState)
-                this.addCompetence(formVar);
+                this.addManager(formVar);
             else
-                this.editCompetence(formVar);
+                this.editManager(formVar);
 
         } else
             formVar.form.markAllAsTouched();
     }
 
-    addCompetence(formVar) {
-        this.competenceService.add(this.currentCompetence).subscribe(
-            (competence) => {
+    addManager(formVar) {
+        // Set Default img
+        if(!this.currentManager.photoURL){
+            this.currentManager.photoURL = 'assets/img/manager.svg';
+            formVar.form.markAsUntouched();
+        }
+
+        this.userService.add(this.currentManager).subscribe(
+            (manager) => {
                 // Show the last page that contains the new competence
                 this.selectPage(this.pageNumbers.length - 1);
 
-                formVar.reset();
+                this.resetState(formVar);
                 Swal.fire({
                     position: 'top-end',
                     icon: 'success',
-                    titleText: `Competence : ${competence.name} has been successfully created`,
+                    titleText: `Manager : ${manager.firstName} has been successfully created`,
                     showConfirmButton: false,
                     timer: 1500,
                 });
             },
-            (error: HttpErrorResponse) => {
+            (error: HttpErrorResponse) => {     
                 console.error(error.error.message);           
-
-                if (error.status === 0){
+                if (error.status === 0)
                     Swal.fire({
                         icon: 'error',
                         title: 'Please make sure that the backend is working properly...',
@@ -100,14 +139,15 @@ export class DashCompetencesComponent implements OnInit {
                         confirmButtonText: 'Ok',
                         focusConfirm: false,
                     });
+                else if(error.error.message.includes("Email already exist")){
+                    formVar.controls.email.setErrors({ 'emailExist': true });
                 }
-               
             }
         );
     }
 
-    editCompetence(formVar) {
-        this.competenceService.update(this.currentCompetence).subscribe(
+    editManager(formVar) {
+        this.userService.update(this.currentManager).subscribe(
             () => {
                 // Show the last page that contains the new competence
                 this.selectPage(this.currentPage)
@@ -116,7 +156,7 @@ export class DashCompetencesComponent implements OnInit {
                 Swal.fire({
                     position: 'top-end',
                     icon: 'success',
-                    titleText: `Competence has been successfully deleted`,
+                    titleText: `Manager has been successfully updated`,
                     showConfirmButton: false,
                     timer: 1500,
                 });
@@ -133,13 +173,16 @@ export class DashCompetencesComponent implements OnInit {
                         focusConfirm: false,
                     });
                 }
+                else if(error.error.message.includes("Email already exist")){
+                    formVar.controls.email.setErrors({ 'emailExist': true });
+                }
             }
         );
     }
 
-    deleteCompetence(id) {
+    deleteManager(id) {
         Swal.fire({
-            title: 'Are you sure you want to detete this Competence?',
+            title: 'Are you sure you want to detete this Manager?',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#F25F5C',
@@ -148,10 +191,10 @@ export class DashCompetencesComponent implements OnInit {
         })
             .then(result => {
                 if (result.value) {
-                    this.competenceService.delete(id).subscribe(
+                    this.userService.delete(id).subscribe(
                         () => {
                             // Case only one element on the page
-                            if (this.competences.length === 1)
+                            if (this.managers.length === 1)
                                 this.selectPage(this.currentPage - 1);
 
                             this.selectPage(this.currentPage);
@@ -159,7 +202,7 @@ export class DashCompetencesComponent implements OnInit {
                             Swal.fire({
                                 position: 'top-end',
                                 icon: 'success',
-                                titleText: `Competence has been successfully deleted`,
+                                titleText: `Manager has been successfully deleted`,
                                 showConfirmButton: false,
                                 timer: 2000,
                             });
@@ -182,16 +225,24 @@ export class DashCompetencesComponent implements OnInit {
             })
     }
 
-    setEditState(competence) {
-        this.currentCompetence = competence;
+    // State Managemet --------------
+    setEditState(manager) {
+        this.currentManager = manager;
         this.addState = false;
-        UIkit.modal('#add-competence').show();
+        UIkit.modal('#add-manager').show();
     }
 
     resetState(formVar) {
         this.addState = true;
-        this.currentCompetence = { name: '' };
+        this.currentManager = {
+            firstName: '',
+            lastName: '',
+            email: '',
+            active: true,
+            role: 'ROLE_MANAGER',
+            photoURL: '',
+            competences: []
+        };
         formVar.form.markAsUntouched();
     }
 }
-
