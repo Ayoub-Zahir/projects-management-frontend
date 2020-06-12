@@ -1,0 +1,61 @@
+<app-navbar></app-navbar>
+
+<div class="uk-grid-collapse uk-child-width-expand" uk-grid style="height: calc(100vh - 70px)">
+
+    <!-- Log in form -->
+    <div class="uk-container uk-flex uk-flex-middle uk-flex-center uk-padding-remove-right uk-animation-slide-left">
+        <form (ngSubmit)="onLogin(loginForm)" #loginForm="ngForm" class="uk-form-stacked">
+
+            <h2 class="uk-text-uppercase uk-text-center uk-heading-medium">log in</h2>
+
+            <div class="uk-fieldset uk-margin-medium-top">
+
+                <!-- Email field  -->
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="form-stacked-text">Email</label>
+                    <div class="uk-inline">
+                        <span class="uk-form-icon" uk-icon="icon: user"></span>
+                        <input class="uk-input uk-form-width-large" [class.uk-form-danger]="authEmail.invalid && authEmail.touched" spellcheck="false" type="text" placeholder="example@gmail.com" name="email" [(ngModel)]="email" #authEmail="ngModel" required pattern="^\S+@\S+\.\S+">
+                    </div>
+
+                    <!-- Validation errors -->
+                    <div *ngIf="authEmail.errors && authEmail.touched">
+                        <p [hidden]="!authEmail.errors?.required" class="uk-text-danger" style="margin-top: 6px;font-size: .9rem;">Email required.</p>
+                        <p [hidden]="!authEmail.errors?.pattern" class="uk-text-danger" style="margin-top: 6px;font-size: .9rem;">Email is not valid.</p>
+                        <p [hidden]="!authEmail.errors?.badCredentials" class="uk-text-danger" style="margin-top: 6px;font-size: .9rem;"></p>
+                    </div>
+                </div>
+
+                <!-- Password field  -->
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="form-stacked-text">Password</label>
+                    <div class="uk-inline">
+                        <span class="uk-form-icon" uk-icon="icon: lock"></span>
+                        <input class="uk-input uk-form-width-large" [class.uk-form-danger]="authPassword.invalid && authPassword.touched" type="password" placeholder="***********" name="password" [(ngModel)]="password" #authPassword="ngModel" minlength="6" required>
+
+                    </div>
+
+                    <!-- Validation errors -->
+                    <div *ngIf="authPassword.errors && authPassword.touched">
+                        <p [hidden]="!authPassword.errors?.required" class="uk-text-danger" style="margin-top: 6px;font-size: .9rem;">Password required.</p>
+                        <p [hidden]="!authPassword.errors?.minlength" class="uk-text-danger" style="margin-top: 6px;font-size: .9rem;">Must be more at least 6 caracters.</p>
+                        <p [hidden]="!authPassword.errors?.badCredentials" class="uk-text-danger" style="margin-top: 6px;font-size: .9rem;">Bad Credentials. Try again.</p>
+                    </div>
+                </div>
+
+                <!-- Submit  -->
+                <div class="uk-margin">
+                    <button [hidden]="loading" [ngClass]="loginForm.invalid && authEmail.touched && authPassword.touched ? 'uk-button-danger' : 'uk-button-primary'" class="uk-button uk-text-bold uk-border-pill uk-width-1-3" type="submit">Log in</button>
+
+                    <button [hidden]="!loading" class="uk-button uk-button-primary uk-text-bold uk-border-pill uk-width-1-3" type="submit" uk-spinner="ratio: 0.9"></button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Background img  -->
+    <div class="uk-animation-slide-right">
+        <div class="img-background">
+        </div>
+    </div>
+</div>

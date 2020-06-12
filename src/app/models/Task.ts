@@ -1,5 +1,9 @@
+import { Project } from './Project';
+import { Collaborater } from './Collaborater';
+import { Competence } from './Competence';
+import { CollaboraterTask } from './CollaboraterTask';
 
-export interface Task{
+export interface Task {
     id?: number,
     name: string,
     hourlyVolume: number,
@@ -7,5 +11,7 @@ export interface Task{
     startDate: Date | string,
     endDate: Date,
     description: string,
-    project?: {id: number}
+    project?: Project,
+    collaboraters?: CollaboraterTask[],
+    competences?: Competence[]
 }

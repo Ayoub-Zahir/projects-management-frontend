@@ -6,11 +6,11 @@ import Swal from 'sweetalert2';
 declare var UIkit: any;
 
 @Component({
-    selector: 'app-dash-competence',
-    templateUrl: './dash-competence.component.html',
-    styleUrls: ['./dash-competence.component.css']
+    selector: 'app-dash-competences',
+    templateUrl: './dash-competences.component.html',
+    styleUrls: ['./dash-competences.component.css']
 })
-export class DashCompetenceComponent implements OnInit {
+export class DashCompetencesComponent implements OnInit {
     loading: boolean = true;
     competences: Competence[];
     currentCompetence: Competence = { name: '' };
@@ -26,10 +26,12 @@ export class DashCompetenceComponent implements OnInit {
     ngOnInit(): void {
         this.competenceService.getCompetences(this.currentPage, this.rowsNumber).subscribe(
             competencePage => {
-                this.totalCompetences = competencePage.totalElements;
-                this.competences = competencePage.content;
-                this.pageNumbers = new Array(competencePage.totalPages);
-                this.loading = false;
+                setTimeout(() => {
+                    this.totalCompetences = competencePage.totalElements;
+                    this.competences = competencePage.content;
+                    this.pageNumbers = new Array(competencePage.totalPages);
+                    this.loading = false;
+                }, 300)
             },
             (error: HttpErrorResponse) => {
                 this.loading = false;
@@ -37,7 +39,7 @@ export class DashCompetenceComponent implements OnInit {
                 if (error.status === 0)
                     this.httpError = 'Please make sure that the backend is working properly...';
                 else
-                    this.httpError = error.error.message;
+                    this.httpError = error.message;
             }
         );
     }
@@ -48,9 +50,7 @@ export class DashCompetenceComponent implements OnInit {
 
             // Refresh Ui
             this.loading = true;
-            setTimeout(() => {
-                this.ngOnInit();
-            }, 200)
+            this.ngOnInit();
         }
     }
 
@@ -60,9 +60,7 @@ export class DashCompetenceComponent implements OnInit {
 
         // Refresh Ui
         this.loading = true;
-        setTimeout(() => {
-            this.ngOnInit();
-        }, 200)
+        this.ngOnInit();
     }
 
     onSubmitCompetence(formVar) {
@@ -92,7 +90,9 @@ export class DashCompetenceComponent implements OnInit {
                 });
             },
             (error: HttpErrorResponse) => {
-                if (error.status === 0)
+                console.error(error.error.message);           
+
+                if (error.status === 0){
                     Swal.fire({
                         icon: 'error',
                         title: 'Please make sure that the backend is working properly...',
@@ -100,14 +100,8 @@ export class DashCompetenceComponent implements OnInit {
                         confirmButtonText: 'Ok',
                         focusConfirm: false,
                     });
-                else
-                    Swal.fire({
-                        icon: 'error',
-                        title: error.error.message,
-                        showCloseButton: true,
-                        confirmButtonText: 'Ok',
-                        focusConfirm: false,
-                    });
+                }
+               
             }
         );
     }
@@ -128,7 +122,9 @@ export class DashCompetenceComponent implements OnInit {
                 });
             },
             (error: HttpErrorResponse) => {
-                if (error.status === 0)
+                console.error(error.error.message);           
+
+                if (error.status === 0){
                     Swal.fire({
                         icon: 'error',
                         title: 'Please make sure that the backend is working properly...',
@@ -136,14 +132,7 @@ export class DashCompetenceComponent implements OnInit {
                         confirmButtonText: 'Ok',
                         focusConfirm: false,
                     });
-                else
-                    Swal.fire({
-                        icon: 'error',
-                        title: error.error.message,
-                        showCloseButton: true,
-                        confirmButtonText: 'Ok',
-                        focusConfirm: false,
-                    });
+                }
             }
         );
     }
@@ -170,13 +159,15 @@ export class DashCompetenceComponent implements OnInit {
                             Swal.fire({
                                 position: 'top-end',
                                 icon: 'success',
-                                titleText: `Competence has been successfully updated`,
+                                titleText: `Competence has been successfully deleted`,
                                 showConfirmButton: false,
                                 timer: 2000,
                             });
                         },
                         (error: HttpErrorResponse) => {
-                            if (error.status === 0)
+                            console.error(error.error.message);           
+
+                            if (error.status === 0){
                                 Swal.fire({
                                     icon: 'error',
                                     title: 'Please make sure that the backend is working properly...',
@@ -184,14 +175,7 @@ export class DashCompetenceComponent implements OnInit {
                                     confirmButtonText: 'Ok',
                                     focusConfirm: false,
                                 });
-                            else
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: error.error.message,
-                                    showCloseButton: true,
-                                    confirmButtonText: 'Ok',
-                                    focusConfirm: false,
-                                });
+                            }
                         }
                     );
                 }

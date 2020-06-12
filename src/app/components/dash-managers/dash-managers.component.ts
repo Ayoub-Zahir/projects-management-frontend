@@ -3,36 +3,32 @@ import { HttpErrorResponse } from '@angular/common/http';
 
 // Models
 import { User } from 'src/app/models/User';
-import { Competence } from 'src/app/models/Competence';
 
 // Services
 import { UserService } from 'src/app/services/user.service';
-import { CompetenceService } from 'src/app/services/competence.service';
 
 import Swal from 'sweetalert2';
 import { AuthService } from 'src/app/services/auth.service';
 declare var UIkit: any;
 
 @Component({
-    selector: 'app-dash-collaboraters',
-    templateUrl: './dash-collaboraters.component.html',
-    styleUrls: ['./dash-collaboraters.component.css']
+    selector: 'app-dash-managers',
+    templateUrl: './dash-managers.component.html',
+    styleUrls: ['./dash-managers.component.css']
 })
-export class DashCollaboratersComponent implements OnInit {
+export class DashManagersComponent implements OnInit {
     // Data
-    collaboraters: User[];
-    currentCollaborater: User = {
+    managers: User[];
+    currentManager: User = {
         firstName: '',
         lastName: '',
         email: '',
         password: '',
-        role: 'ROLE_COLLABORATER',
+        role: 'ROLE_MANAGER',
         photoURL: '',
         active: true,
         competences: [],
-        tasks: []
     };
-    competences: Competence[] = [];
     currentUserAuh: User;
 
     // State management
@@ -40,7 +36,7 @@ export class DashCollaboratersComponent implements OnInit {
     addState: boolean = true;
 
     // Pagination
-    totalCollaboraters: number;
+    totalManagers: number;
     pageNumbers: number[];
     currentPage: number = 0;
     rowsNumber: number = 5;
@@ -50,24 +46,22 @@ export class DashCollaboratersComponent implements OnInit {
 
     constructor(
         private userService: UserService,
-        private competenceService: CompetenceService,
         private authService: AuthService
     ) { }
 
     ngOnInit(): void {
-
         // Get Auth user
         this.authService.getCurrentAuthUser().subscribe(user => {
             this.currentUserAuh = user;
         })
 
-        // Get collaboraters
-        this.userService.getCollaboraters(this.currentPage, this.rowsNumber).subscribe(
-            collaboraterPage => {
+        // Get managers
+        this.userService.getManagers(this.currentPage, this.rowsNumber).subscribe(
+            managerPage => {
                 setTimeout(() => {
-                    this.totalCollaboraters = collaboraterPage.totalElements;
-                    this.collaboraters = collaboraterPage.content;
-                    this.pageNumbers = new Array(collaboraterPage.totalPages);
+                    this.totalManagers = managerPage.totalElements;
+                    this.managers = managerPage.content;
+                    this.pageNumbers = new Array(managerPage.totalPages);
                     this.loading = false;
                 }, 300)
             },
@@ -103,26 +97,26 @@ export class DashCollaboratersComponent implements OnInit {
     }
 
     // CRUD Operations ---------------
-    onSubmitCollaborater(formVar) {
+    onSubmitManager(formVar) {
         if (formVar.valid) {
             if (this.addState)
-                this.addCollaborater(formVar);
+                this.addManager(formVar);
             else
-                this.editCollaborater(formVar);
+                this.editManager(formVar);
 
         } else
             formVar.form.markAllAsTouched();
     }
 
-    addCollaborater(formVar) {
+    addManager(formVar) {
         // Set Default img
-        if(!this.currentCollaborater.photoURL){
-            this.currentCollaborater.photoURL = 'assets/img/collaborater.svg';
+        if(!this.currentManager.photoURL){
+            this.currentManager.photoURL = 'assets/img/manager.svg';
             formVar.form.markAsUntouched();
         }
 
-        this.userService.add(this.currentCollaborater).subscribe(
-            (collaborater) => {
+        this.userService.add(this.currentManager).subscribe(
+            (manager) => {
                 // Show the last page that contains the new competence
                 this.selectPage(this.pageNumbers.length - 1);
 
@@ -130,13 +124,13 @@ export class DashCollaboratersComponent implements OnInit {
                 Swal.fire({
                     position: 'top-end',
                     icon: 'success',
-                    titleText: `Collaborater : ${collaborater.firstName} has been successfully created`,
+                    titleText: `Manager : ${manager.firstName} has been successfully created`,
                     showConfirmButton: false,
                     timer: 1500,
                 });
             },
-            (error: HttpErrorResponse) => {      
-                console.error(error.message);          
+            (error: HttpErrorResponse) => {     
+                console.error(error.error.message);           
                 if (error.status === 0)
                     Swal.fire({
                         icon: 'error',
@@ -145,15 +139,15 @@ export class DashCollaboratersComponent implements OnInit {
                         confirmButtonText: 'Ok',
                         focusConfirm: false,
                     });
-                else if (error.error.message.includes("Email already exist")) {
+                else if(error.error.message.includes("Email already exist")){
                     formVar.controls.email.setErrors({ 'emailExist': true });
                 }
             }
         );
     }
 
-    editCollaborater(formVar) {
-        this.userService.update(this.currentCollaborater).subscribe(
+    editManager(formVar) {
+        this.userService.update(this.currentManager).subscribe(
             () => {
                 // Show the last page that contains the new competence
                 this.selectPage(this.currentPage)
@@ -162,13 +156,13 @@ export class DashCollaboratersComponent implements OnInit {
                 Swal.fire({
                     position: 'top-end',
                     icon: 'success',
-                    titleText: `Collaborater has been successfully updated`,
+                    titleText: `Manager has been successfully updated`,
                     showConfirmButton: false,
                     timer: 1500,
                 });
             },
             (error: HttpErrorResponse) => {
-                console.error(error.message);          
+                console.error(error.error.message);           
 
                 if (error.status === 0){
                     Swal.fire({
@@ -186,9 +180,9 @@ export class DashCollaboratersComponent implements OnInit {
         );
     }
 
-    deleteCollaborater(id) {
+    deleteManager(id) {
         Swal.fire({
-            title: 'Are you sure you want to detete this Collaborater?',
+            title: 'Are you sure you want to detete this Manager?',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#F25F5C',
@@ -200,7 +194,7 @@ export class DashCollaboratersComponent implements OnInit {
                     this.userService.delete(id).subscribe(
                         () => {
                             // Case only one element on the page
-                            if (this.collaboraters.length === 1)
+                            if (this.managers.length === 1)
                                 this.selectPage(this.currentPage - 1);
 
                             this.selectPage(this.currentPage);
@@ -208,13 +202,13 @@ export class DashCollaboratersComponent implements OnInit {
                             Swal.fire({
                                 position: 'top-end',
                                 icon: 'success',
-                                titleText: `Collaborater has been successfully deleted`,
+                                titleText: `Manager has been successfully deleted`,
                                 showConfirmButton: false,
                                 timer: 2000,
                             });
                         },
                         (error: HttpErrorResponse) => {
-                            console.error(error.message);          
+                            console.error(error.error.message);           
 
                             if (error.status === 0){
                                 Swal.fire({
@@ -232,77 +226,23 @@ export class DashCollaboratersComponent implements OnInit {
     }
 
     // State Managemet --------------
-    setEditState(collaborater) {
-        this.currentCollaborater = collaborater;
+    setEditState(manager) {
+        this.currentManager = manager;
         this.addState = false;
-        UIkit.modal('#add-collaborater').show();
+        UIkit.modal('#add-manager').show();
     }
 
     resetState(formVar) {
         this.addState = true;
-        this.competences = [];
-        this.currentCollaborater = {
+        this.currentManager = {
             firstName: '',
             lastName: '',
             email: '',
             active: true,
-            role: 'ROLE_COLLABORATER',
+            role: 'ROLE_MANAGER',
             photoURL: '',
             competences: []
         };
         formVar.form.markAsUntouched();
     }
-
-    // Collaborater competences management
-    searchCompetence(keyword, event): void{
-        // Clear div
-        if(event.key === 'Backspace'){
-            this.competences = [];
-        }
-
-        // Only alphanumeric characters
-        if(event.keyCode <= 90 && event.keyCode >= 48 || event.keyCode >= 96 && event.keyCode <= 105){
-            this.competenceService.search(keyword).subscribe(
-                (competences) => {
-                    this.competences = competences;
-                },
-                (error: HttpErrorResponse) => {
-                    console.error(error.error.message);           
-                    
-                    if (error.status === 0){
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Please make sure that the backend is working properly...',
-                            showCloseButton: true,
-                            confirmButtonText: 'Ok',
-                            focusConfirm: false,
-                        });
-                    }
-                    
-                }
-            )
-        }
-    }
-
-    onChecked(competence): void{
-        // Check if the competence is already selected
-        if(this.isSelected(competence)){
-            // Delete 
-            this.removeCompetence(competence);
-        }else{
-            // Add
-            this.currentCollaborater.competences.push(competence);
-        }
-    }
-
-    isSelected(competence): boolean{
-        // Check if the competence in => currentCollaborater.competences array
-        return this.currentCollaborater.competences.filter(e => e.id === competence.id).length > 0;
-    }   
-
-    removeCompetence(competence){
-        const index = this.currentCollaborater.competences.indexOf(competence);
-        this.currentCollaborater.competences.splice(index, 1);
-    }
-
 }

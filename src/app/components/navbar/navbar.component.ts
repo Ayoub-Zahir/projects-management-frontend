@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthService } from 'src/app/services/auth.service';
+import { User } from 'src/app/models/User';
 
 @Component({
     selector: 'app-navbar',
@@ -6,12 +8,17 @@ import { Component, OnInit } from '@angular/core';
     styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent implements OnInit {
-    currentUser;
-    isChevronRight: boolean = true;
+    currentUser: User;
+    isChevronRight: boolean = false;
 
-    constructor() { }
+    constructor(private authService: AuthService) { }
 
     ngOnInit(): void {
+        if(this.authService.isUserLogin()){
+            this.authService.getCurrentAuthUser().subscribe(user => {
+                this.currentUser = user;
+            });
+        }
     }
 
 }

@@ -1,21 +1,22 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+
 // Models
 import { Competence } from 'src/app/models/Competence';
-import { identifierModuleUrl } from '@angular/compiler';
+
+// Rxjs
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 const headers: HttpHeaders = new HttpHeaders({'Content-type':'application/json; charset=UTF-8'});
-
 
 @Injectable({
     providedIn: 'root'
 })
 export class CompetenceService {
 
-    private URL: string = `${environment.apiURL}/competences`;
+    private URL: string = `${environment.apiURL}/manager/competences`;
 
     constructor(private http: HttpClient) { }
 
@@ -29,10 +30,6 @@ export class CompetenceService {
 
     add(competence: Competence): Observable<Competence>{
         return this.http.post<Competence>(this.URL, competence, { headers });
-    }
-
-    get(id: string): Observable<Competence>{
-        return this.http.get<Competence>(`${this.URL}/${id}`, { headers });
     }
 
     update(updatedCompetence: Competence): Observable<Competence>{

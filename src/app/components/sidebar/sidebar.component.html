@@ -5,15 +5,8 @@
 
             <!-- Logo -->
             <li>
-                <a routerLink="/dashboard">
+                <a routerLink="/projects">
                     <img src="assets/img/logo.svg" alt="logo">
-                </a>
-            </li>
-
-            <!-- Dashboard -->
-            <li class="uk-text-left" routerLinkActive="uk-active" style="margin-top: 1rem;">
-                <a class="fs-1 uk-margin-small-left uk-margin-small-right" routerLink="/dashboard">
-                    <span class="uk-margin-small-right material-icons-outlined uk-text-middle">assessment</span> Dashboard
                 </a>
             </li>
 
@@ -24,14 +17,21 @@
                 </a>
             </li>
 
-            <!-- Tasks -->
+            <!-- Scheduler -->
             <li class="uk-text-left uk-margin-top" routerLinkActive="uk-active">
-                <a class="fs-1 uk-margin-small-left uk-margin-small-right" routerLink="/tasks">
-                    <span class="uk-margin-small-right material-icons-outlined uk-text-middle">check_circle</span> Tasks
+                <a class="fs-1 uk-margin-small-left uk-margin-small-right" routerLink="/scheduler">
+                    <span class="uk-margin-small-right material-icons-outlined uk-text-middle">date_range</span> Scheduler
                 </a>
             </li>
 
-            <!-- Competences -->
+            <!-- Managers -->
+            <li *ngIf="currentUser?.role === 'ROLE_ADMIN'" class="uk-text-left uk-margin-top" routerLinkActive="uk-active">
+                <a class="fs-1 uk-margin-small-left uk-margin-small-right" routerLink="/managers">
+                    <span class="uk-margin-small-right material-icons-outlined uk-text-middle">engineering</span> Managers
+                </a>
+            </li>
+
+            <!-- Collaboraters -->
             <li class="uk-text-left uk-margin-top" routerLinkActive="uk-active">
                 <a class="fs-1 uk-margin-small-left uk-margin-small-right" routerLink="/collaboraters">
                     <span class="uk-margin-small-right material-icons uk-text-middle">people_outline</span> Collaboraters
@@ -39,7 +39,7 @@
             </li>
 
             <!-- Competences -->
-            <li class="uk-text-left uk-margin-top" routerLinkActive="uk-active">
+            <li *ngIf="currentUser?.role === 'ROLE_ADMIN' || currentUser?.role === 'ROLE_MANAGER'" class="uk-text-left uk-margin-top" routerLinkActive="uk-active">
                 <a class="fs-1 uk-margin-small-left uk-margin-small-right" routerLink="/competences">
                     <span class="uk-margin-small-right material-icons uk-text-middle">code</span> Competences
                 </a>
@@ -54,7 +54,7 @@
             </li>
 
             <!-- History -->
-            <li class="uk-text-left uk-margin-top" routerLinkActive="uk-active">
+            <li *ngIf="currentUser?.role === 'ROLE_ADMIN'" class="uk-text-left uk-margin-top" routerLinkActive="uk-active">
                 <a class="fs-1 uk-margin-small-left uk-margin-small-right" routerLink="/history">
                     <span class="uk-margin-small-right material-icons-outlined uk-text-middle">restore</span> Users History
                 </a>

@@ -1,0 +1,217 @@
+/** Tab Nav **************************/
+
+#tab-nav li a {
+    font-size: 16px;
+}
+
+#tab-nav>.uk-active>a {
+    border-color: #3C91E6 !important;
+    border-bottom-width: 3px !important;
+    font-weight: 550;
+}
+
+#content {
+    padding-top: 30px !important;
+}
+
+
+/** Pagination ***********************/
+
+.page-active>a {
+    font-weight: 550 !important;
+    color: #0D1B1E !important;
+}
+
+.border-radius-right {
+    border-top-right-radius: 20px !important;
+    border-bottom-right-radius: 20px !important;
+}
+
+.border-radius-left {
+    border-top-left-radius: 20px !important;
+    border-bottom-left-radius: 20px !important;
+}
+
+.border-radius-top {
+    border-top-right-radius: 10px !important;
+    border-top-left-radius: 10px !important;
+}
+
+.border-radius-bottom {
+    border-bottom-right-radius: 10px !important;
+    border-bottom-left-radius: 10px !important;
+}
+
+
+/** competences dropdown ****/
+
+.uk-dropdown-nav li {
+    background: whitesmoke;
+    margin: 15px 0;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: .9rem;
+}
+
+
+/** Task link **************/
+
+td>a {
+    color: initial;
+}
+
+
+/** Labels *******************/
+
+.uk-label-success {
+    background-color: #51CF66 !important;
+    border-radius: 5px;
+    text-transform: none !important;
+    padding: 3px 10px !important;
+}
+
+.uk-label-primary {
+    background-color: #3C91E6 !important;
+    border-radius: 5px;
+    text-transform: none !important;
+    padding: 3px 10px !important;
+}
+
+.uk-label-default {
+    background-color: whitesmoke !important;
+    border-radius: 5px;
+    text-transform: none !important;
+    padding: 3px 10px !important;
+    color: rgb(119, 119, 119) !important;
+}
+
+.uk-label-white {
+    background-color: white !important;
+    border-radius: 5px;
+    text-transform: none !important;
+    padding: 3px 10px !important;
+    font-size: 13px;
+    color: rgb(119, 119, 119) !important;
+}
+
+
+/** Details Modal ***************/
+
+.uk-modal-header {
+    border: none !important;
+}
+
+.uk-modal-body {
+    padding: 10px 30px !important;
+}
+
+.collaborater {
+    background: whitesmoke;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+
+/** Add new task offcanvas ***********/
+
+.uk-offcanvas-bar {
+    background-color: whitesmoke !important;
+}
+
+.uk-offcanvas-bar h2 {
+    color: rgb(51, 51, 51) !important;
+    margin: 0 0;
+}
+
+.uk-offcanvas-bar form {
+    padding: 25px;
+}
+
+.uk-offcanvas-bar .uk-input,
+.uk-offcanvas-bar .uk-textarea {
+    background: #fff !important;
+    color: #666 !important;
+    border: 1px solid #e5e5e5 !important;
+}
+
+.uk-offcanvas-bar .uk-form-label {
+    color: #333 !important;
+}
+
+.uk-offcanvas-bar .uk-input::placeholder,
+.uk-offcanvas-bar .uk-textarea::placeholder {
+    color: #999 !important;
+}
+
+.uk-offcanvas-bar .uk-button-default:hover,
+.uk-offcanvas-bar .uk-button-default:focus {
+    color: #333 !important;
+    border-color: #b2b2b2 !important;
+}
+
+.uk-offcanvas-bar .uk-button-default {
+    color: #333 !important;
+    border-color: #b2b2b2 !important;
+}
+
+.uk-offcanvas-bar .uk-checkbox:checked {
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2214%22%20height%3D%2211%22%20viewBox%3D%220%200%2014%2011%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Cpolygon%20fill%3D%22%23fff%22%20points%3D%2212%201%205%207.5%202%205%201%205.5%205%2010%2013%201.5%22%20%2F%3E%0A%3C%2Fsvg%3E%0A") !important;
+    background-color: #1e87f0 !important;
+    border-color: transparent !important;
+}
+
+.uk-offcanvas-bar .uk-checkbox {
+    border: 1px solid #cccccc !important;
+}
+
+.uk-offcanvas-bar {
+    width: 65%;
+    padding: 20px 40px 40px 40px;
+}
+
+.uk-offcanvas-bar .uk-form-danger {
+    color: initial !important;
+    border-color: #f0506e !important;
+}
+
+.uk-offcanvas-bar .uk-form-icon {
+    color: inherit !important;
+}
+
+
+/** Selected Competences ************/
+
+.selected-competence div {
+    padding: 10px 15px;
+    border: solid 1px rgb(229, 229, 229);
+}
+
+.selected-competence div>button {
+    cursor: default;
+    padding: 0 15px;
+    font-size: .9rem;
+}
+
+.selected-competence div>button>span {
+    cursor: pointer;
+}
+
+
+/** working-hours input placeholder ********/
+
+.working-hours .uk-input::placeholder {
+    font-size: 13px !important;
+}
+
+.uk-inline {
+    display: block !important;
+}
+
+.border-danger {
+    border: 1.5px solid #F25F5C;
+    color: #f0506e !important;
+}
+
+.toggleComplete {
+    border: 1.5px solid #dadada !important;
+}

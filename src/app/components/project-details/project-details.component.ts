@@ -1,15 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
-import Swal from 'sweetalert2';
 
 // Models
 import { Project } from 'src/app/models/Project';
-import { Task } from 'src/app/models/Task';
 
 // Services
 import { ProjectService } from 'src/app/services/project.service';
-import { TaskService } from 'src/app/services/task.service';
+import { AuthService } from 'src/app/services/auth.service';
+import { User } from 'src/app/models/User';
 
 @Component({
     selector: 'app-project-details',
@@ -19,16 +18,21 @@ import { TaskService } from 'src/app/services/task.service';
 export class ProjectDetailsComponent implements OnInit {
     loading: boolean = true;
     currentProject: Project;
+    currentUserAuh: User;
     httpError: string;
-    currentTask: Task;
 
     constructor(
         private projectService: ProjectService,
-        private taskService: TaskService,
+        private authService: AuthService,
         private activeRoute: ActivatedRoute
     ) { }
 
     ngOnInit(): void {
+        // Get Auth user
+        this.authService.getCurrentAuthUser().subscribe(user => {
+            this.currentUserAuh = user;
+        });
+
         const projectId = this.activeRoute.snapshot.paramMap.get('id');
 
         this.projectService.get(projectId).subscribe(
@@ -40,19 +44,10 @@ export class ProjectDetailsComponent implements OnInit {
                 project.daysLeft = daysLeft;
                 project.completedTasks = completedTasks.length;
 
-                this.currentProject = project;
-                this.loading = false;
-
-                // Init new Task
-                this.currentTask = {
-                    name: '',
-                    hourlyVolume: null,
-                    isComplete: false,
-                    startDate: new Date().toLocaleDateString('en-CA'),
-                    endDate: null,
-                    description: '',
-                    project: {id: this.currentProject.id}
-                };
+                setTimeout(() => {
+                    this.currentProject = project;
+                    this.loading = false;
+                }, 300)
             },
             (error: HttpErrorResponse) => {
                 this.loading = false;
@@ -64,31 +59,6 @@ export class ProjectDetailsComponent implements OnInit {
 
             }
         )
-    }
-
-    addTask(formVar){
-        if(formVar.valid){
-            this.currentTask.isComplete = formVar.value.state === 'In progress' ? false : true;
-            
-            this.taskService.add(this.currentTask).subscribe(
-                () => {
-                    Swal.fire({
-                        position: 'top-end',
-                        icon: 'success',
-                        titleText: `Task has been successfully added`,
-                        showConfirmButton: false,
-                        timer: 2300,
-                    });
-                    formVar.reset();
-                },
-                (error: HttpErrorResponse) => {
-                    if (error.status === 0)
-                        this.httpError = 'Please make sure that the backend is working properly...';
-                    else
-                        this.httpError = error.error.message;
-                }
-            )
-        }
     }
 
 }
