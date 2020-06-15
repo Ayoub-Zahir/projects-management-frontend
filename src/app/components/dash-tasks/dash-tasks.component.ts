@@ -57,7 +57,7 @@ export class DashTasksComponent implements OnInit {
     totalTasks: number;
     pageNumbers: number[];
     currentPage: number = 0;
-    rowsNumber: number = 3;
+    rowsNumber: number = 4;
 
     // Errors
     httpError: string;
